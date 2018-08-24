@@ -1,0 +1,12 @@
+{
+  "name": "dist",
+  "version": "1.0.0",
+  "description": "dist",
+  "main": "app.js",
+  "dependencies": {
+    "express": "4.16.3",
+    "serve-static": "^1.13.2"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}
