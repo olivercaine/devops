@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+cd "$(dirname "$0")"
 
 repo_url=$(git config --get remote.origin.url)
 repo=${repo_url##*/}
@@ -100,8 +101,6 @@ deploy_server () {
 }
 
 echo "Deploying https://bitbucket.org/olliecaine/$PROJECT_NAME/commits/$BITBUCKET_COMMIT"
-
-cd ../
 
 deploy_client
 echo "Deployed app to https://$HEROKU_APP_NAME.herokuapp.com"
