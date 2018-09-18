@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# Move to repo root
-cd ../
-
 repo_url=$(git config --get remote.origin.url)
 repo=${repo_url##*/}
 proj=${repo%%.*}
