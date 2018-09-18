@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-cd "$(dirname "$0")"
+
+# Move to repo root
+cd ../
 
 repo_url=$(git config --get remote.origin.url)
 repo=${repo_url##*/}
