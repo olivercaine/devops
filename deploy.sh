@@ -114,6 +114,12 @@ deploy_server () {
     cd ../../
 }
 
-test_module
-deploy_client
-deploy_server
+if [ -d "module" ]; then
+  test_module
+fi
+if [ -d "client" ]; then
+  deploy_client
+fi
+if [ -d "server" ]; then
+  deploy_server
+fi
