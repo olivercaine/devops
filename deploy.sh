@@ -33,6 +33,17 @@ install_and_test () {
     fi
 }
 
+test_module () {
+    echo "cd to module..."
+    cd ./module 
+
+    echo "Testing module..."
+    install_and_test
+
+    echo "cd to root..."
+    cd ../    
+}
+
 deploy_client () {
     echo "Creating app '$HEROKU_APP_NAME'..."
     heroku create -a $HEROKU_APP_NAME --region eu
@@ -63,8 +74,10 @@ deploy_client () {
     cd ../
     rm -rf tmp
 
+    echo "Deployed app to https://$HEROKU_APP_NAME.herokuapp.com"
+
     echo "cd to root..."
-    cd ../
+    cd ../    
 }
 
 deploy_server () {
@@ -95,14 +108,12 @@ deploy_server () {
     echo "Releasing container to '$HEROKU_APP_NAME-s'..."
     heroku container:release web -a $HEROKU_APP_NAME-s
 
+    echo "Deployed app to https://$HEROKU_APP_NAME-s.herokuapp.com"
+
     echo "cd to root..."
     cd ../../
 }
 
-echo "Deploying https://bitbucket.org/olliecaine/$PROJECT_NAME/commits/$BITBUCKET_COMMIT"
-
+test_module
 deploy_client
-echo "Deployed app to https://$HEROKU_APP_NAME.herokuapp.com"
-
 deploy_server
-echo "Deployed app to https://$HEROKU_APP_NAME-s.herokuapp.com"
