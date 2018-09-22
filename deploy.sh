@@ -22,15 +22,20 @@ echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
 HEROKU_APP_NAME="$PROJECT_NAME-$BITBUCKET_BRANCH"
 echo "HEROKU_APP_NAME $HEROKU_APP_NAME"
 
-install_and_test () {
-    npm install
-    npm test
+validate_success () {
     if [ $? -eq 0 ]; then
         echo OK
     else
         echo FAIL
         exit 1
     fi
+}
+
+install_and_test () {
+    echo "Install and test..."
+    npm install
+    npm test
+    validate_success
 }
 
 test_module () {
@@ -48,8 +53,11 @@ deploy_client () {
     echo "cd to client..."
     cd ./client
 
-    echo "Testing client..."
     install_and_test
+
+    echo "Performing lint check..."
+    npm run lint
+    validate_success
 
     echo "Creating dist..."
     npm run build
@@ -81,11 +89,14 @@ deploy_client () {
 }
 
 deploy_server () {
-    echo "cd to server..."
+    echo "cd to directory..."
     cd ./server
 
-    echo "Testing server..."
     install_and_test
+
+    echo "Performing lint check..."
+    npm run lint
+    validate_success
         
     echo "Creating app '$HEROKU_APP_NAME-s'..."
     heroku create -a $HEROKU_APP_NAME-s --region eu
