@@ -31,33 +31,24 @@ validate_success () {
     fi
 }
 
-install_and_test () {
-    echo "Install and test..."
+install_test_and_lint () {
+    echo "cd to $1..."
+    cd ./$1
+
+    echo "Installing, testing and linting $1..."
     npm install
     npm test
     validate_success
-}
-
-test_module () {
-    echo "cd to module..."
-    cd ./module 
-
-    echo "Testing module..."
-    install_and_test
+    npm run lint
+    validate_success
 
     echo "cd to root..."
-    cd ../    
+    cd ../ 
 }
 
 deploy_client () {
     echo "cd to client..."
     cd ./client
-
-    install_and_test
-
-    echo "Performing lint check..."
-    npm run lint
-    validate_success
 
     echo "Creating dist..."
     npm run build
@@ -92,12 +83,6 @@ deploy_server () {
     echo "cd to directory..."
     cd ./server
 
-    install_and_test
-
-    echo "Performing lint check..."
-    npm start lint
-    validate_success
-        
     echo "Creating app '$HEROKU_APP_NAME-s'..."
     heroku create -a $HEROKU_APP_NAME-s --region eu
 
@@ -125,12 +110,10 @@ deploy_server () {
     cd ../../
 }
 
-if [ -d "module" ]; then
-  test_module
+if [ -d module ]; then
+    install_test_and_lint module
 fi
-if [ -d "client" ]; then
-  deploy_client
-fi
-if [ -d "server" ]; then
-  deploy_server
-fi
+install_test_and_lint client
+install_test_and_lint server
+deploy_client
+deploy_server
