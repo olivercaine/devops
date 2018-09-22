@@ -45,9 +45,6 @@ test_module () {
 }
 
 deploy_client () {
-    echo "Creating app '$HEROKU_APP_NAME'..."
-    heroku create -a $HEROKU_APP_NAME --region eu
-
     echo "cd to client..."
     cd ./client
 
@@ -56,6 +53,9 @@ deploy_client () {
 
     echo "Creating dist..."
     npm run build
+
+    echo "Creating app '$HEROKU_APP_NAME'..."
+    heroku create -a $HEROKU_APP_NAME --region eu
 
     echo "Preparing submodule deploy..."
     git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git tmp
@@ -81,14 +81,14 @@ deploy_client () {
 }
 
 deploy_server () {
-    echo "Creating app '$HEROKU_APP_NAME-s'..."
-    heroku create -a $HEROKU_APP_NAME-s --region eu
-
     echo "cd to server..."
     cd ./server
 
     echo "Testing server..."
     install_and_test
+        
+    echo "Creating app '$HEROKU_APP_NAME-s'..."
+    heroku create -a $HEROKU_APP_NAME-s --region eu
 
     echo "Building image '$HEROKU_APP_NAME-s:$BITBUCKET_COMMIT' and pushing to Heroku..."
     docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
