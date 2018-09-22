@@ -95,7 +95,7 @@ deploy_server () {
     install_and_test
 
     echo "Performing lint check..."
-    npm run lint
+    npm start lint
     validate_success
         
     echo "Creating app '$HEROKU_APP_NAME-s'..."
