@@ -103,7 +103,7 @@ deploy_server () {
 }
 
 if [ -d module ]; then
-    install_test_and_lint module
+    # install_test_and_lint module
 fi
 install_test_and_lint client
 install_test_and_lint server
