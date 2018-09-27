@@ -45,8 +45,8 @@ deploy_client () {
     echo "Creating dist..."
     npm run build
 
-    # echo "Creating app '$HEROKU_APP_NAME'..."
-    # heroku create -a $HEROKU_APP_NAME --region eu
+    echo "Creating app '$HEROKU_APP_NAME'..."
+    heroku create -a $HEROKU_APP_NAME --region eu || true
 
     echo "Preparing submodule deploy..."
     git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git tmp
@@ -75,8 +75,8 @@ deploy_server () {
     echo "cd to directory..."
     cd ./server
 
-    # echo "Creating app '$HEROKU_APP_NAME-s'..."
-    # heroku create -a $HEROKU_APP_NAME-s --region eu || true
+    echo "Creating app '$HEROKU_APP_NAME-s'..."
+    heroku create -a $HEROKU_APP_NAME-s --region eu || true
 
     echo "Building image '$HEROKU_APP_NAME-s:$BITBUCKET_COMMIT' and pushing to Heroku..."
     docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
@@ -107,5 +107,5 @@ if [ -d module ]; then
 fi
 install_test_and_lint client
 install_test_and_lint server
-deploy_client
-deploy_server
+# deploy_client
+# deploy_server
