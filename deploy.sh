@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Exit immediately if a simple command exits with a nonzero exit value
+set -e
+
 repo_url=$(git config --get remote.origin.url)
 repo=${repo_url##*/}
 proj=${repo%%.*}
@@ -22,15 +25,6 @@ echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
 HEROKU_APP_NAME="$PROJECT_NAME-$BITBUCKET_BRANCH"
 echo "HEROKU_APP_NAME $HEROKU_APP_NAME"
 
-validate_success () {
-    if [ $? -eq 0 ]; then
-        echo OK
-    else
-        echo FAIL
-        exit 1
-    fi
-}
-
 install_test_and_lint () {
     echo "cd to $1..."
     cd ./$1
@@ -38,9 +32,7 @@ install_test_and_lint () {
     echo "Installing, testing and linting $1..."
     npm install
     npm test
-    validate_success
     npm run lint
-    validate_success
 
     echo "cd to root..."
     cd ../ 
