@@ -46,7 +46,7 @@ deploy_client () {
     npm run build
 
     echo "Creating app '$HEROKU_APP_NAME'..."
-    heroku create -a $HEROKU_APP_NAME --region eu
+    heroku create -a $HEROKU_APP_NAME --region eu || true
 
     echo "Preparing submodule deploy..."
     git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git tmp
