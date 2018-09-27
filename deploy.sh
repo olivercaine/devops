@@ -102,9 +102,9 @@ deploy_server () {
     cd ../../
 }
 
-if [ -d module ]; then
+# if [ -d module ]; then
     # install_test_and_lint module
-fi
+# fi
 install_test_and_lint client
 install_test_and_lint server
 deploy_client
