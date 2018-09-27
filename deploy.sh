@@ -107,5 +107,5 @@ if [ -d module ]; then
 fi
 install_test_and_lint client
 install_test_and_lint server
-# deploy_client
-# deploy_server
+deploy_client
+deploy_server
