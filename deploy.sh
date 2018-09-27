@@ -76,7 +76,7 @@ deploy_server () {
     cd ./server
 
     echo "Creating app '$HEROKU_APP_NAME-s'..."
-    heroku create -a $HEROKU_APP_NAME-s --region eu
+    heroku create -a $HEROKU_APP_NAME-s --region eu || true
 
     echo "Building image '$HEROKU_APP_NAME-s:$BITBUCKET_COMMIT' and pushing to Heroku..."
     docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
