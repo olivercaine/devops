@@ -30,7 +30,7 @@ install_test_and_lint () {
     cd ./$1
 
     echo "Installing, testing and linting $1..."
-    npm install
+    yarn install
     npm test
     npm run lint
 
