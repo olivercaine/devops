@@ -49,7 +49,7 @@ deploy_client () {
     heroku create -a $HEROKU_APP_NAME --region eu || true
 
     echo "Preparing submodule deploy..."
-    git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git tmp
+    git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git tmp -b master
     cd tmp
     git config --global user.email "olliecaine@gmail.com"
     git config --global user.name "Oliver Caine"
