@@ -48,6 +48,7 @@ deploy_client () {
     echo "Creating dist..."
     npm run build
 
+    echo "Copying in Node app..."
     cp ../devops/static-web-app/* ./dist
 
     echo "Building image '$HEROKU_APP_NAME:$BITBUCKET_COMMIT' and pushing to Heroku..."
@@ -66,51 +67,7 @@ deploy_client () {
     echo "Deployed app to https://$HEROKU_APP_NAME-s.herokuapp.com"
 
     echo "cd to root..."
-    cd ../../
-
-
-    # git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git client_heroku
-    # cd client_heroku
-    # git fetch
-    # git pull
-    # git checkout -b master
-    # git config --global user.email "olliecaine@gmail.com"
-    # git config --global user.name "Oliver Caine"
-    # rm -rf ./*
-    # cp -R ../client/dist/. .
-    # cp ../devops/static-web-app/* .
-    # git add . && git commit -am "Client dist for $BITBUCKET_COMMIT"
-    # git push
-
-    # echo "cd to client..."
-    # cd ./client
-
-    
-    # npm run build
-
-
-
-    # echo "Preparing submodule deploy..."
-    # git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git tmp -b master
-    # cd tmp
-    # git pull
-
-    # rm -rf ./*
-    # cp -R ../dist/. .
-    # cp -R ../../devops/static-web-app/. .
-
-    # echo "Pushing client to Heroku..."
-    # git add . && git commit -am "Dist"
-    # git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
-
-    # echo "Remove tmp folder..."
-    # cd ../
-    
-    echo "Deployed app to https://$HEROKU_APP_NAME.herokuapp.com"
-
-    echo "cd to root..."
-    cd ../    
-    rm -rf client_heroku
+    cd ../
 }
 
 deploy_server () {
@@ -144,10 +101,10 @@ deploy_server () {
     cd ../../
 }
 
-# if [ -d module ]; then
-    # install_lint_and_test module
-# fi
+if [ -d module ]; then
+    install_lint_and_test module
+fi
 install_lint_and_test client
-# install_lint_and_test server
+install_lint_and_test server
 deploy_client
-# deploy_server
+deploy_server
