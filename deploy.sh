@@ -39,37 +39,46 @@ install_lint_and_test () {
 }
 
 deploy_client () {
-    echo "cd to client..."
-    cd ./client
+    npm run build --prefix client
+    git submodule add https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git client_heroku
+    rm -rf ./client_heroku/*
+    cp -R ./client/dist/. ./client_heroku
+    cp ./devops/static-web-app/* ./client_heroku
+    cd client_heroku
+    git add . && git commit -am "Client dist for $BITBUCKET_COMMIT"
+    git push
 
-    echo "Creating dist..."
-    npm run build
+    # echo "cd to client..."
+    # cd ./client
 
-    echo "Creating app '$HEROKU_APP_NAME'..."
-    heroku create -a $HEROKU_APP_NAME --region eu || true
+    # echo "Creating dist..."
+    # npm run build
 
-    echo "Preparing submodule deploy..."
-    git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git tmp -b master
-    cd tmp
-    git pull
-    git config --global user.email "olliecaine@gmail.com"
-    git config --global user.name "Oliver Caine"
-    rm -rf ./*
-    cp -R ../dist/. .
-    cp -R ../../devops/static-web-app/. .
+    # echo "Creating app '$HEROKU_APP_NAME'..."
+    # heroku create -a $HEROKU_APP_NAME --region eu || true
 
-    echo "Pushing client to Heroku..."
-    git add . && git commit -am "Dist"
-    git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+    # echo "Preparing submodule deploy..."
+    # git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git tmp -b master
+    # cd tmp
+    # git pull
+    # git config --global user.email "olliecaine@gmail.com"
+    # git config --global user.name "Oliver Caine"
+    # rm -rf ./*
+    # cp -R ../dist/. .
+    # cp -R ../../devops/static-web-app/. .
 
-    echo "Remove tmp folder..."
-    cd ../
-    rm -rf tmp
+    # echo "Pushing client to Heroku..."
+    # git add . && git commit -am "Dist"
+    # git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+
+    # echo "Remove tmp folder..."
+    # cd ../
+    rm -rf client_heroku
 
     echo "Deployed app to https://$HEROKU_APP_NAME.herokuapp.com"
 
-    echo "cd to root..."
-    cd ../    
+    # echo "cd to root..."
+    # cd ../    
 }
 
 deploy_server () {
