@@ -39,21 +39,48 @@ install_lint_and_test () {
 }
 
 deploy_client () {
+    echo "cd to directory..."
+    cd ./client
+
     echo "Creating app '$HEROKU_APP_NAME'..."
     heroku create -a $HEROKU_APP_NAME --region eu || true
 
     echo "Creating dist..."
-    npm run build --prefix client
-    git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git client_heroku
-    cd client_heroku
-    git pull
-    git config --global user.email "olliecaine@gmail.com"
-    git config --global user.name "Oliver Caine"
-    rm -rf ./*
-    cp -R ../client/dist/. .
-    cp ../devops/static-web-app/* .
-    git add . && git commit -am "Client dist for $BITBUCKET_COMMIT"
-    git push
+    npm run build
+
+    cp ../devops/static-web-app/* ./dist
+
+    echo "Building image '$HEROKU_APP_NAME:$BITBUCKET_COMMIT' and pushing to Heroku..."
+    docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+
+    echo "Building and pushing container..."
+    ID=$(docker build . -q -t $HEROKU_APP_NAME:$BITBUCKET_COMMIT)
+    NAME="registry.heroku.com/$HEROKU_APP_NAME/web"
+    docker tag $ID $NAME
+    docker images
+    docker push $NAME
+    
+    echo "Releasing container to '$HEROKU_APP_NAME'..."
+    heroku container:release web -a $HEROKU_APP_NAME
+
+    echo "Deployed app to https://$HEROKU_APP_NAME-s.herokuapp.com"
+
+    echo "cd to root..."
+    cd ../../
+
+
+    # git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git client_heroku
+    # cd client_heroku
+    # git fetch
+    # git pull
+    # git checkout -b master
+    # git config --global user.email "olliecaine@gmail.com"
+    # git config --global user.name "Oliver Caine"
+    # rm -rf ./*
+    # cp -R ../client/dist/. .
+    # cp ../devops/static-web-app/* .
+    # git add . && git commit -am "Client dist for $BITBUCKET_COMMIT"
+    # git push
 
     # echo "cd to client..."
     # cd ./client
