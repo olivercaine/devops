@@ -31,38 +31,43 @@ install_lint_and_test () {
 
     echo "Installing, testing and linting $1..."
     yarn install
-    npm run lint
-    npm test
+    # npm run lint
+    # npm test
     
     echo "cd to root..."
     cd ../ 
 }
 
 deploy_client () {
+    echo "Creating app '$HEROKU_APP_NAME'..."
+    heroku create -a $HEROKU_APP_NAME --region eu || true
+
+    echo "Creating dist..."
     npm run build --prefix client
-    git submodule add https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git client_heroku
-    rm -rf ./client_heroku/*
-    cp -R ./client/dist/. ./client_heroku
-    cp ./devops/static-web-app/* ./client_heroku
+    git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git client_heroku
     cd client_heroku
+    git pull
+    git config --global user.email "olliecaine@gmail.com"
+    git config --global user.name "Oliver Caine"
+    rm -rf ./*
+    cp -R ../client/dist/. .
+    cp ../devops/static-web-app/* .
     git add . && git commit -am "Client dist for $BITBUCKET_COMMIT"
     git push
 
     # echo "cd to client..."
     # cd ./client
 
-    # echo "Creating dist..."
+    
     # npm run build
 
-    # echo "Creating app '$HEROKU_APP_NAME'..."
-    # heroku create -a $HEROKU_APP_NAME --region eu || true
+
 
     # echo "Preparing submodule deploy..."
     # git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git tmp -b master
     # cd tmp
     # git pull
-    # git config --global user.email "olliecaine@gmail.com"
-    # git config --global user.name "Oliver Caine"
+
     # rm -rf ./*
     # cp -R ../dist/. .
     # cp -R ../../devops/static-web-app/. .
@@ -73,12 +78,12 @@ deploy_client () {
 
     # echo "Remove tmp folder..."
     # cd ../
-    rm -rf client_heroku
-
+    
     echo "Deployed app to https://$HEROKU_APP_NAME.herokuapp.com"
 
-    # echo "cd to root..."
-    # cd ../    
+    echo "cd to root..."
+    cd ../    
+    rm -rf client_heroku
 }
 
 deploy_server () {
@@ -116,6 +121,6 @@ deploy_server () {
     # install_lint_and_test module
 # fi
 install_lint_and_test client
-install_lint_and_test server
+# install_lint_and_test server
 deploy_client
-deploy_server
+# deploy_server
