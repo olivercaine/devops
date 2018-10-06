@@ -25,15 +25,15 @@ echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
 HEROKU_APP_NAME="$PROJECT_NAME-$BITBUCKET_BRANCH"
 echo "HEROKU_APP_NAME $HEROKU_APP_NAME"
 
-install_test_and_lint () {
+install_lint_and_test () {
     echo "cd to $1..."
     cd ./$1
 
     echo "Installing, testing and linting $1..."
     yarn install
-    npm test
     npm run lint
-
+    npm test
+    
     echo "cd to root..."
     cd ../ 
 }
@@ -51,6 +51,7 @@ deploy_client () {
     echo "Preparing submodule deploy..."
     git submodule add --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git tmp -b master
     cd tmp
+    git pull
     git config --global user.email "olliecaine@gmail.com"
     git config --global user.name "Oliver Caine"
     rm -rf ./*
@@ -103,9 +104,9 @@ deploy_server () {
 }
 
 # if [ -d module ]; then
-    # install_test_and_lint module
+    # install_lint_and_test module
 # fi
-install_test_and_lint client
-install_test_and_lint server
+install_lint_and_test client
+install_lint_and_test server
 deploy_client
 deploy_server
