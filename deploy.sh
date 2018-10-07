@@ -25,7 +25,7 @@ echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
 HEROKU_APP_NAME="$PROJECT_NAME-$BITBUCKET_BRANCH"
 echo "HEROKU_APP_NAME $HEROKU_APP_NAME"
 
-function install_lint_and_test {
+install_lint_and_test () {
     echo "cd to $1..."
     cd ./$1
 
@@ -38,7 +38,7 @@ function install_lint_and_test {
     cd ../ 
 }
 
-function build_and_push_container {
+build_and_push_container () {
     HEROKU_APP_NAME=$1
     BITBUCKET_COMMIT=$2
     HEROKU_API_KEY=$3
@@ -62,7 +62,7 @@ function build_and_push_container {
     echo "Deployed app to https://$HEROKU_APP_NAME.herokuapp.com"
 }
 
-function deploy_client {
+deploy_client () {
     echo "cd to directory..."
     cd ./client
 
@@ -78,7 +78,7 @@ function deploy_client {
     cd ../
 }
 
-function deploy_server {
+deploy_server () {
     echo "cd to directory..."
     cd ./server
 
