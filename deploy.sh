@@ -29,7 +29,7 @@ install_lint_and_test () {
     echo "cd to $1..."
     cd ./$1
 
-    echo "Installing, testing and linting $1..."
+    echo "Installing, linting and testing $1..."
     yarn install
     npm run lint
     npm test
