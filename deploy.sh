@@ -91,8 +91,12 @@ function deploy_server {
 if [ -d module ]; then
     install_lint_and_test module
 fi
-install_lint_and_test client
-install_lint_and_test server
+if [ -d client ]; then
+    install_lint_and_test client
+fi
+if [ -d server ]; then
+    install_lint_and_test server
+fi
 
 deploy_client
 deploy_server
