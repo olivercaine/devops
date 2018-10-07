@@ -31,8 +31,8 @@ install_lint_and_test () {
 
     echo "Installing, testing and linting $1..."
     yarn install
-    # npm run lint
-    # npm test
+    npm run lint
+    npm test
     
     echo "cd to root..."
     cd ../ 
