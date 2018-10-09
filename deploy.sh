@@ -30,7 +30,7 @@ if [ ${#HEROKU_APP_NAME} -gt $max_length ]; then
     overBy=`expr ${#HEROKU_APP_NAME} - $max_length`
     echo -e "Error: Trying to create Heroku app with name '$HEROKU_APP_NAME' which is $overBy characters too long"
     echo -e "Reduce size of the project name or the branch name and try again"
-    exit
+    exit 1
 fi
 
 install_lint_and_test () {
