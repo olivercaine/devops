@@ -31,26 +31,20 @@ HEROKU_APP_NAME="$PROJECT_NAME-$BITBUCKET_BRANCH"
 max_length=28
 if [ ${#HEROKU_APP_NAME} -gt $max_length ]; then 
     # HEROKU_APP_NAME=''
-    tmp=''
+    tmp=""
 
     # Characters="TESTING"
     index=1
-    while [ $index -le ${#HEROKU_APP_NAME} ]
+    while [ $index -le 28 ]
     do
-        letter=$(${HEROKU_APP_NAME} | cut -c${index}-${index})
-        echo "letter: $letter"
-        tmp+=letter
+        var=$(echo ${HEROKU_APP_NAME} | cut -c${index}-${index})
+        # tmp="$tmp $var"
+        tmp=$tmp"$var"
         index=$(expr $index + 1)
     done
 
-    HEROKU_APP_NAME=tmp
-#     while read line ; do
-#   ##this line is not correct, should strip :port and store to ip var
-#   ip=$( echo "$line" |cut -d\: -f1 )
-#   ping $ip
-# done < ${file}
-
-    # echo "end"
+    # echo $tmp
+    HEROKU_APP_NAME=$tmp
 
     # for value in {1..5}
     # do
@@ -70,6 +64,7 @@ if [ ${#HEROKU_APP_NAME} -gt $max_length ]; then
     # done
     # HEROKU_APP_NAME=$new_name
 fi
+echo "3"
 echo "HEROKU_APP_NAME $HEROKU_APP_NAME"
 exit
 
