@@ -26,13 +26,37 @@ echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
 HEROKU_APP_NAME="$PROJECT_NAME-$BITBUCKET_BRANCH"
 max_length=28
 if [ ${#HEROKU_APP_NAME} -gt $max_length ]; then 
-    new_name=""
-    for (( i=0; i<$max_length; i++ )); do
-        new_name+=${HEROKU_APP_NAME:$i:1}
+    # HEROKU_APP_NAME=''
+
+    counter=1
+    while [ $counter -le 28 ]
+    do
+        echo ${HEROKU_APP_NAME:$counter:1}
+        ((counter++))
     done
-    HEROKU_APP_NAME=$new_name
+
+    echo "end"
+
+    for value in {1..5}
+    do
+    # echo $value
+    echo ${HEROKU_APP_NAME:$value:1}
+    done
+
+    # counter=1
+    # until [ $counter -le 28 ]
+    # do
+    # HEROKU_APP_NAME+=${HEROKU_APP_NAME:$counter:1}
+    # ((counter++))
+    # done
+
+    # for (( i=0; i<$max_length; i++ )); do
+    #     new_name+=${HEROKU_APP_NAME:$i:1}
+    # done
+    # HEROKU_APP_NAME=$new_name
 fi
 echo "HEROKU_APP_NAME $HEROKU_APP_NAME"
+exit
 
 install_lint_and_test () {
     echo "cd to $1..."
