@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Exit immediately if a simple command exits with a non-zero exit value
 set -e
