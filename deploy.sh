@@ -43,7 +43,7 @@ if [ ${#HEROKU_APP_NAME} -gt $max_length ]; then
         index=$(expr $index + 1)
     done
 
-
+    HEROKU_APP_NAME=tmp
 #     while read line ; do
 #   ##this line is not correct, should strip :port and store to ip var
 #   ip=$( echo "$line" |cut -d\: -f1 )
