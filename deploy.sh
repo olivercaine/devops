@@ -22,51 +22,21 @@ BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
 # /Params
 
-echo "x"
-echo $0
-echo "y"
-
-# Create app name and crop if it's too long
+# Create app name but crop if it's too long
 HEROKU_APP_NAME="$PROJECT_NAME-$BITBUCKET_BRANCH"
 max_length=28
 if [ ${#HEROKU_APP_NAME} -gt $max_length ]; then 
-    # HEROKU_APP_NAME=''
     tmp=""
-
-    # Characters="TESTING"
     index=1
-    while [ $index -le 28 ]
+    while [ $index -le $max_length ]
     do
         var=$(echo ${HEROKU_APP_NAME} | cut -c${index}-${index})
-        # tmp="$tmp $var"
         tmp=$tmp"$var"
         index=$(expr $index + 1)
     done
-
-    # echo $tmp
     HEROKU_APP_NAME=$tmp
-
-    # for value in {1..5}
-    # do
-    # # echo $value
-    # echo ${HEROKU_APP_NAME:$value:1}
-    # done
-
-    # counter=1
-    # until [ $counter -le 28 ]
-    # do
-    # HEROKU_APP_NAME+=${HEROKU_APP_NAME:$counter:1}
-    # ((counter++))
-    # done
-
-    # for (( i=0; i<$max_length; i++ )); do
-    #     new_name+=${HEROKU_APP_NAME:$i:1}
-    # done
-    # HEROKU_APP_NAME=$new_name
 fi
-echo "3"
 echo "HEROKU_APP_NAME $HEROKU_APP_NAME"
-exit
 
 install_lint_and_test () {
     echo "cd to $1..."
