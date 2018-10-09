@@ -22,6 +22,10 @@ BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
 # /Params
 
+echo "x"
+echo $0
+echo "y"
+
 # Create app name and crop if it's too long
 HEROKU_APP_NAME="$PROJECT_NAME-$BITBUCKET_BRANCH"
 max_length=28
