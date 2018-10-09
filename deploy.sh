@@ -28,20 +28,21 @@ max_length=28
 if [ ${#HEROKU_APP_NAME} -gt $max_length ]; then 
     # HEROKU_APP_NAME=''
 
-    counter=1
-    while [ $counter -le 28 ]
+    # Characters="TESTING"
+    index=1
+    while [ $index -le ${#HEROKU_APP_NAME} ]
     do
-        echo ${HEROKU_APP_NAME:$counter:1}
-        ((counter++))
+        echo ${HEROKU_APP_NAME} | cut -c${index}-${index}
+        index=$(expr $index + 1)
     done
 
-    echo "end"
+    # echo "end"
 
-    for value in {1..5}
-    do
-    # echo $value
-    echo ${HEROKU_APP_NAME:$value:1}
-    done
+    # for value in {1..5}
+    # do
+    # # echo $value
+    # echo ${HEROKU_APP_NAME:$value:1}
+    # done
 
     # counter=1
     # until [ $counter -le 28 ]
