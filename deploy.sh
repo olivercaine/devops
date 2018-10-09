@@ -25,6 +25,11 @@ echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
 HEROKU_APP_NAME="$PROJECT_NAME-$BITBUCKET_BRANCH"
 echo "HEROKU_APP_NAME $HEROKU_APP_NAME"
 
+
+echo "x"
+echo ${HEROKU_APP_NAME:7:3}
+echo "x"
+
 max_length=28
 if [ ${#HEROKU_APP_NAME} -gt $max_length ]; then 
     overBy=`expr ${#HEROKU_APP_NAME} - $max_length`
