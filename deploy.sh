@@ -22,21 +22,17 @@ BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
 # /Params
 
+# Create app name and crop if it's too long
 HEROKU_APP_NAME="$PROJECT_NAME-$BITBUCKET_BRANCH"
-echo "HEROKU_APP_NAME $HEROKU_APP_NAME"
-
-
-echo "x"
-echo ${HEROKU_APP_NAME:7:3}
-echo "x"
-
 max_length=28
 if [ ${#HEROKU_APP_NAME} -gt $max_length ]; then 
-    overBy=`expr ${#HEROKU_APP_NAME} - $max_length`
-    echo -e "Error: Trying to create Heroku app with name '$HEROKU_APP_NAME' which is $overBy characters too long"
-    echo -e "Reduce size of the project name or the branch name and try again"
-    exit 1
+    new_name=""
+    for (( i=0; i<$max_length; i++ )); do
+        new_name+=${HEROKU_APP_NAME:$i:1}
+    done
+    HEROKU_APP_NAME=$new_name
 fi
+echo "HEROKU_APP_NAME $HEROKU_APP_NAME"
 
 install_lint_and_test () {
     echo "cd to $1..."
