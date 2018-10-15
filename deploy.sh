@@ -111,5 +111,9 @@ if [ -d server ]; then
     install_lint_and_test server
 fi
 
-deploy_client
-deploy_server
+if [ -d client ]; then
+    deploy_client
+fi
+if [ -d server ]; then
+    deploy_server
+fi
