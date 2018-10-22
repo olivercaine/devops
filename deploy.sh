@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Exit immediately if a simple command exits with a non-zero exit value
-set -e
+set -e # Exit on non-zero exit value
 
 repo_url=$(git config --get remote.origin.url)
 repo=${repo_url##*/}
@@ -20,7 +19,6 @@ echo "BITBUCKET_BRANCH $BITBUCKET_BRANCH"
 
 BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
-# /Params
 
 # Create app name but crop if it's too long
 HEROKU_APP_NAME="$PROJECT_NAME-$BITBUCKET_BRANCH"
@@ -39,16 +37,18 @@ fi
 echo "HEROKU_APP_NAME $HEROKU_APP_NAME"
 
 install_lint_and_test () {
-    echo "cd to $1..."
-    cd ./$1
+    if [ -d $1 ]; then
+        echo "cd to $1..."
+        cd ./$1
 
-    echo "Installing, linting and testing $1..."
-    yarn install
-    npm run lint
-    npm test
-    
-    echo "cd to root..."
-    cd ../ 
+        echo "Installing, linting and testing $1..."
+        yarn install
+        npm run lint
+        npm test
+        
+        echo "cd to root..."
+        cd ../ 
+    fi
 }
 
 build_and_push_container () {
@@ -76,44 +76,38 @@ build_and_push_container () {
 }
 
 deploy_client () {
-    echo "cd to directory..."
-    cd ./client
+    if [ -d client ]; then
+        echo "cd to directory..."
+        cd ./client
 
-    echo "Creating dist..."
-    npm run build
+        echo "Creating dist..."
+        npm run build
 
-    echo "Copying in Node app..."
-    cp ../devops/static-web-app/* ./dist
+        echo "Copying in Node app..."
+        cp ../devops/static-web-app/* ./dist
 
-    build_and_push_container $HEROKU_APP_NAME $BITBUCKET_COMMIT $HEROKU_API_KEY
+        build_and_push_container $HEROKU_APP_NAME $BITBUCKET_COMMIT $HEROKU_API_KEY
 
-    echo "cd to root..."
-    cd ../
+        echo "cd to root..."
+        cd ../
+    fi
 }
 
 deploy_server () {
-    echo "cd to directory..."
-    cd ./server
+    if [ -d server ]; then
+        echo "cd to directory..."
+        cd ./server
 
-    build_and_push_container "$HEROKU_APP_NAME-s" $BITBUCKET_COMMIT $HEROKU_API_KEY
+        build_and_push_container "$HEROKU_APP_NAME-s" $BITBUCKET_COMMIT $HEROKU_API_KEY
 
-    echo "cd to root..."
-    cd ../
+        echo "cd to root..."
+        cd ../
+    fi
 }
 
-if [ -d module ]; then
-    install_lint_and_test module
-fi
-if [ -d client ]; then
-    install_lint_and_test client
-fi
-if [ -d server ]; then
-    install_lint_and_test server
-fi
+install_lint_and_test module
+install_lint_and_test client
+install_lint_and_test server
 
-if [ -d client ]; then
-    deploy_client
-fi
-if [ -d server ]; then
-    deploy_server
-fi
+deploy_client
+deploy_server
