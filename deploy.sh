@@ -96,5 +96,5 @@ install_lint_and_test client
 install_lint_and_test server
 
 # Does running in sync speed it up?
-deploy client
-deploy server
+deploy client &
+deploy server &
