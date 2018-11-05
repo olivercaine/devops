@@ -52,9 +52,9 @@ install_lint_and_test () {
 }
 
 build_and_push_container () {
-    HEROKU_APP_NAME=$1
-    BITBUCKET_COMMIT=$2
-    HEROKU_API_KEY=$3
+    local HEROKU_APP_NAME=$1
+    local BITBUCKET_COMMIT=$2
+    local HEROKU_API_KEY=$3
 
     echo "Creating app '$HEROKU_APP_NAME'..."
     heroku create -a $HEROKU_APP_NAME --region eu || true
@@ -75,30 +75,16 @@ build_and_push_container () {
     echo "Deployed app to https://$HEROKU_APP_NAME.herokuapp.com"
 }
 
-deploy_client () {
-    if [ -d client ]; then
-        echo "cd to directory..."
-        cd ./client
+deploy () {
+    if [ -d $1 ]; then
+        echo "cd to $1..."
+        cd ./$1
 
         echo "Creating dist..."
         npm run build
 
-        echo "Copying in Node app..."
-        cp ../devops/static-web-app/* ./dist
-
-        build_and_push_container $HEROKU_APP_NAME $BITBUCKET_COMMIT $HEROKU_API_KEY
-
-        echo "cd to root..."
-        cd ../
-    fi
-}
-
-deploy_server () {
-    if [ -d server ]; then
-        echo "cd to directory..."
-        cd ./server
-
-        build_and_push_container "$HEROKU_APP_NAME-s" $BITBUCKET_COMMIT $HEROKU_API_KEY
+        suffix="$(echo $1 | head -c 1)"
+        build_and_push_container $HEROKU_APP_NAME-$suffix $BITBUCKET_COMMIT $HEROKU_API_KEY
 
         echo "cd to root..."
         cd ../
@@ -109,5 +95,6 @@ install_lint_and_test module
 install_lint_and_test client
 install_lint_and_test server
 
-deploy_client
-deploy_server
+# Does running in sync speed it up?
+deploy client
+deploy server
