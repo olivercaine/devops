@@ -91,11 +91,9 @@ deploy () {
     fi
 }
 
-# TODO: speed these up by running in subprocesses
 install_lint_and_test module
 install_lint_and_test client
 install_lint_and_test server
 
-# Warning: running in subprocesses swallows Docker error
-deploy client &
-deploy server &
+deploy client
+deploy server
