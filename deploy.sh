@@ -93,33 +93,33 @@ deploy () {
 
 HEROKU_APP_NAME=$(trim_string "$PROJECT_NAME-$BITBUCKET_BRANCH")
 
-install_lint_and_test module
-install_lint_and_test client
-install_lint_and_test server
+# install_lint_and_test module
+# install_lint_and_test client
+# install_lint_and_test server
 
-# FAIL=0
+FAIL=0
 
-# echo "starting"
+echo "starting"
 
-# install_lint_and_test module &
-# install_lint_and_test client &
-# install_lint_and_test server &
+install_lint_and_test module &
+install_lint_and_test client &
+install_lint_and_test server &
 
-# for job in `jobs -p`
-# do
-# echo $job
-#     wait $job || let "FAIL+=1"
-# done
+for job in `jobs -p`
+do
+echo $job
+    wait $job || let "FAIL+=1"
+done
 
-# echo $FAIL
+echo $FAIL
 
-# if [ "$FAIL" == "0" ];
-# then
-#     echo "YAY!"
-# else
-#     echo "FAIL! ($FAIL)"
-#     exit 1
-# fi
+if [ "$FAIL" == "0" ];
+then
+    echo "YAY!"
+else
+    echo "FAIL! ($FAIL)"
+    exit 1
+fi
 
 deploy client
 deploy server
