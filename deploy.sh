@@ -73,12 +73,16 @@ install_lint_test_and_build () {
         echo "cd to $directory..."
         cd ./$directory
 
-        echo "Installing, linting and testing $directory..."
+        echo "Installing $directory..."
         yarn install
+
+        echo "Linting $directory..."
         npm run lint
+        
+        echo "Testing $directory..."
         npm test
 
-        echo "Creating dist..."
+        echo "Building $directory..."
         npm run build
 
         echo "cd to root..."
