@@ -113,11 +113,11 @@ done
 
 echo $FAIL
 
-if ["$FAIL" == "0" ]; then
-    echo "YAY!"
+if [ "$FAIL" == "0" ];
+then
+echo "YAY!"
 else
-    echo "FAIL! ($FAIL)"
-    exit 1
+echo "FAIL! ($FAIL)"
 fi
 
 deploy client
