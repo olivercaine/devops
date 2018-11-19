@@ -37,42 +37,25 @@ trim_string () {
     echo $string
 }
 
-install_lint_and_test () {
-    if [ -d $1 ]; then
-        echo "cd to $1..."
-        cd ./$1
+build_container () {
+    local heroku_app_name=$1
 
-        echo "Installing, linting and testing $1..."
-        yarn install
-        npm run lint
-        npm test
-        
-        echo "cd to root..."
-        cd ../ 
-    fi
-}
+    echo "Creating app '$heroku_app_name'..."
+    heroku create -a $heroku_app_name --region eu || true
 
-build_and_push_container () {
-    local HEROKU_APP_NAME=$1
-    local BITBUCKET_COMMIT=$2
-    local HEROKU_API_KEY=$3
-
-    echo "Creating app '$HEROKU_APP_NAME'..."
-    heroku create -a $HEROKU_APP_NAME --region eu || true
-
-    echo "Building image '$HEROKU_APP_NAME:$BITBUCKET_COMMIT' and pushing to Heroku..."
+    echo "Building image '$heroku_app_name:$BITBUCKET_COMMIT' and pushing to Heroku..."
     docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
 
     echo "Building and pushing container..."
-    ID=$(docker build . -q -t $HEROKU_APP_NAME:$BITBUCKET_COMMIT)
-    NAME="registry.heroku.com/$HEROKU_APP_NAME/web"
+    ID=$(docker build . -q -t $heroku_app_name:$BITBUCKET_COMMIT)
+    NAME="registry.heroku.com/$heroku_app_name/web"
     docker tag $ID $NAME
     docker push $NAME
     
-    echo "Releasing container to '$HEROKU_APP_NAME'..."
-    heroku container:release web -a $HEROKU_APP_NAME
+    echo "Releasing container to '$heroku_app_name'..."
+    heroku container:release web -a $heroku_app_name
 
-    echo "Deployed app to https://$HEROKU_APP_NAME.herokuapp.com"
+    echo "Deployed app to https://$heroku_app_name.herokuapp.com"
 }
 
 deploy () {
@@ -80,22 +63,38 @@ deploy () {
         echo "cd to $1..."
         cd ./$1
 
-        echo "Creating dist..."
-        npm run build
-
         suffix="$(echo $1 | head -c 1)"
-        build_and_push_container $HEROKU_APP_NAME-$suffix $BITBUCKET_COMMIT $HEROKU_API_KEY
+        build_container $HEROKU_APP_NAME-$suffix
 
         echo "cd to root..."
         cd ../
     fi
 }
 
+install_lint_test_and_build () {
+    local directory=$1
+    if [ -d $directory ]; then
+        echo "cd to $directory..."
+        cd ./$directory
+
+        echo "Installing, linting and testing $directory..."
+        yarn install
+        npm run lint
+        npm test
+
+        echo "Creating dist..."
+        npm run build
+        
+        echo "cd to root..."
+        cd ../ 
+    fi
+}
+
 HEROKU_APP_NAME=$(trim_string "$PROJECT_NAME-$BITBUCKET_BRANCH")
 
-install_lint_and_test module
-install_lint_and_test client
-install_lint_and_test server
+install_lint_test_and_build module
+install_lint_test_and_build client
+install_lint_test_and_build server
 
 deploy client
 deploy server
