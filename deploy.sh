@@ -107,7 +107,7 @@ install_lint_and_test server &
 
 for job in `jobs -p`
 do
-echo $job
+    echo $job
     wait $job || let "FAIL+=1"
 done
 
@@ -115,9 +115,9 @@ echo $FAIL
 
 if [ "$FAIL" == "0" ];
 then
-echo "YAY!"
+    echo "YAY!"
 else
-echo "FAIL! ($FAIL)"
+    echo "FAIL! ($FAIL)"
 fi
 
 deploy client
