@@ -113,8 +113,7 @@ done
 
 echo $FAIL
 
-if (( "$FAIL" == "0" ))
-then
+if ["$FAIL" == "0" ]; then
     echo "YAY!"
 else
     echo "FAIL! ($FAIL)"
