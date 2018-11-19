@@ -66,7 +66,6 @@ build_and_push_container () {
     ID=$(docker build . -q -t $HEROKU_APP_NAME:$BITBUCKET_COMMIT)
     NAME="registry.heroku.com/$HEROKU_APP_NAME/web"
     docker tag $ID $NAME
-    docker images
     docker push $NAME
     
     echo "Releasing container to '$HEROKU_APP_NAME'..."
