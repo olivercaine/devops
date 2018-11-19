@@ -20,23 +20,24 @@ echo "BITBUCKET_BRANCH $BITBUCKET_BRANCH"
 BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
 
-# Create app name but crop if it's too long
-HEROKU_APP_NAME="$PROJECT_NAME-$BITBUCKET_BRANCH"
-max_length=28
-if [ ${#HEROKU_APP_NAME} -gt $max_length ]; then 
-    tmp=""
-    index=1
-    while [ $index -le $max_length ]
-    do
-        var=$(echo ${HEROKU_APP_NAME} | cut -c${index}-${index})
-        tmp=$tmp"$var"
-        index=$(expr $index + 1)
-    done
-    HEROKU_APP_NAME=$tmp
-fi
-echo "HEROKU_APP_NAME $HEROKU_APP_NAME"
+function trim_string {
+    local string=$1
+    local max_length=${2:-28}
+    if [ ${#string} -gt $max_length ]; then 
+        tmp=""
+        index=1
+        while [ $index -le $max_length ]
+        do
+            var=$(echo ${string} | cut -c${index}-${index})
+            tmp=$tmp"$var"
+            index=$(expr $index + 1)
+        done
+        string=$tmp
+    fi
+    echo $string
+}
 
-install_lint_and_test () {
+function install_lint_and_test {
     if [ -d $1 ]; then
         echo "cd to $1..."
         cd ./$1
@@ -51,7 +52,7 @@ install_lint_and_test () {
     fi
 }
 
-build_and_push_container () {
+function build_and_push_container {
     local HEROKU_APP_NAME=$1
     local BITBUCKET_COMMIT=$2
     local HEROKU_API_KEY=$3
@@ -74,7 +75,7 @@ build_and_push_container () {
     echo "Deployed app to https://$HEROKU_APP_NAME.herokuapp.com"
 }
 
-deploy () {
+function deploy {
     if [ -d $1 ]; then
         echo "cd to $1..."
         cd ./$1
@@ -89,6 +90,8 @@ deploy () {
         cd ../
     fi
 }
+
+HEROKU_APP_NAME=$(trim_string "$PROJECT_NAME-$BITBUCKET_BRANCH")
 
 install_lint_and_test module
 install_lint_and_test client
