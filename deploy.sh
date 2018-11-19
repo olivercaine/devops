@@ -20,7 +20,7 @@ echo "BITBUCKET_BRANCH $BITBUCKET_BRANCH"
 BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
 
-function trim_string {
+trim_string () {
     local string=$1
     local max_length=${2:-28}
     if [ ${#string} -gt $max_length ]; then 
@@ -37,7 +37,7 @@ function trim_string {
     echo $string
 }
 
-function install_lint_and_test {
+install_lint_and_test () {
     if [ -d $1 ]; then
         echo "cd to $1..."
         cd ./$1
@@ -52,7 +52,7 @@ function install_lint_and_test {
     fi
 }
 
-function build_and_push_container {
+build_and_push_container () {
     local HEROKU_APP_NAME=$1
     local BITBUCKET_COMMIT=$2
     local HEROKU_API_KEY=$3
@@ -75,7 +75,7 @@ function build_and_push_container {
     echo "Deployed app to https://$HEROKU_APP_NAME.herokuapp.com"
 }
 
-function deploy {
+deploy () {
     if [ -d $1 ]; then
         echo "cd to $1..."
         cd ./$1
@@ -96,6 +96,30 @@ HEROKU_APP_NAME=$(trim_string "$PROJECT_NAME-$BITBUCKET_BRANCH")
 install_lint_and_test module
 install_lint_and_test client
 install_lint_and_test server
+
+# FAIL=0
+
+# echo "starting"
+
+# install_lint_and_test module &
+# install_lint_and_test client &
+# install_lint_and_test server &
+
+# for job in `jobs -p`
+# do
+# echo $job
+#     wait $job || let "FAIL+=1"
+# done
+
+# echo $FAIL
+
+# if [ "$FAIL" == "0" ];
+# then
+#     echo "YAY!"
+# else
+#     echo "FAIL! ($FAIL)"
+#     exit 1
+# fi
 
 deploy client
 deploy server
