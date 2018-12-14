@@ -74,7 +74,7 @@ install_lint_test_and_build () {
         cd ./$directory
 
         echo "Installing $directory..."
-        yarn install --prefer-offline
+        yarn install
 
         echo "Linting $directory..."
         npm run lint
