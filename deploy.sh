@@ -20,7 +20,7 @@ echo "BITBUCKET_BRANCH $BITBUCKET_BRANCH"
 BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
 
-trim_string () {
+prep_heroku_app_name () {
     local string=$1
     local max_length=${2:-28}
     if [ ${#string} -gt $max_length ]; then 
@@ -34,7 +34,7 @@ trim_string () {
         done
         string=$tmp
     fi
-    echo $string
+    echo $string | tr / - # Heroky doesn't allow "/" so replace it with "-"
 }
 
 docker_build_and_push () {
@@ -97,7 +97,7 @@ install_lint_test_and_build () {
     fi
 }
 
-HEROKU_APP_NAME=$(trim_string "$PROJECT_NAME-$BITBUCKET_BRANCH")
+HEROKU_APP_NAME=$(prep_heroku_app_name "$PROJECT_NAME-$BITBUCKET_BRANCH")
 
 install_lint_test_and_build module true
 install_lint_test_and_build client false
