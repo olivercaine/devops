@@ -100,7 +100,6 @@ install_lint_test_and_build () {
 HEROKU_APP_NAME=$(prep_heroku_app_name "$PROJECT_NAME-$BITBUCKET_BRANCH")
 
 install_lint_test_and_build module true
-install_lint_test_and_build client false
 install_lint_test_and_build server false
 
 docker_build_and_push client &
