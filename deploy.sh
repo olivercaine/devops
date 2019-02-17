@@ -37,32 +37,17 @@ prep_heroku_app_name () {
     echo $string | tr / - # Heroky doesn't allow "/" so replace it with "-"
 }
 
-install_lint_test_and_build () {
+docker_build () {
     local directory=$1
-    local use_docker=$2
 
     if [ -d $directory ]; then
         echo "cd to $directory..."
         cd ./$directory
 
-        if [ "$use_docker" = true ]; then
-            echo "Installing, testing, linting and building $directory using Docker..."
-            time npm run build:docker -- -t $PROJECT_NAME/$directory
-        else
-            echo "Installing $directory..."
-            yarn install
+        echo "Installing, testing, linting and building $directory using Docker..."
+        time npm run build:docker -- -t $PROJECT_NAME/$directory
 
-            echo "Linting $directory..."
-            npm run lint
-            
-            echo "Testing $directory..."
-            npm test
-
-            echo "Building $directory..."
-            npm run build
-        fi
-
-        echo "cd to root..."
+        echo "cd back to root..."
         cd ../ 
     fi
 }
@@ -99,8 +84,7 @@ docker_build_and_push () {
 
 HEROKU_APP_NAME=$(prep_heroku_app_name "$PROJECT_NAME-$BITBUCKET_BRANCH")
 
-time install_lint_test_and_build module true
-time install_lint_test_and_build server false
-
+# TODO: use docker_build_and_push for module
+time docker_build module
 time docker_build_and_push client
 time docker_build_and_push server
