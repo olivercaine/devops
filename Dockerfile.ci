@@ -1,3 +1,5 @@
-FROM node:8.15 as ci-environment
+FROM node:8.15 as ci
+
+RUN npm set progress=false
 
 RUN curl https://cli-assets.heroku.com/install.sh | sh; heroku --version; which heroku;
