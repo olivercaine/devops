@@ -69,21 +69,28 @@ docker_build_and_push () {
 
 install_lint_test_and_build () {
     local directory=$1
+    local use_docker=$2
+
     if [ -d $directory ]; then
         echo "cd to $directory..."
         cd ./$directory
 
-        echo "Installing $directory..."
-        yarn install
+        if [ "$use_docker" = true ]; then
+            echo "Installing, testing, linting and building $directory using Docker..."
+            npm run build:docker
+        else
+            echo "Installing $directory..."
+            yarn install
 
-        echo "Linting $directory..."
-        npm run lint
-        
-        echo "Testing $directory..."
-        npm test
+            echo "Linting $directory..."
+            npm run lint
+            
+            echo "Testing $directory..."
+            npm test
 
-        echo "Building $directory..."
-        npm run build
+            echo "Building $directory..."
+            npm run build
+        fi
 
         echo "cd to root..."
         cd ../ 
@@ -92,9 +99,9 @@ install_lint_test_and_build () {
 
 HEROKU_APP_NAME=$(trim_string "$PROJECT_NAME-$BITBUCKET_BRANCH")
 
-install_lint_test_and_build module
-install_lint_test_and_build client
-install_lint_test_and_build server
+install_lint_test_and_build module true
+install_lint_test_and_build client false
+install_lint_test_and_build server false
 
 docker_build_and_push client &
 docker_build_and_push server
