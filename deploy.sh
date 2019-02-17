@@ -47,7 +47,7 @@ install_lint_test_and_build () {
 
         if [ "$use_docker" = true ]; then
             echo "Installing, testing, linting and building $directory using Docker..."
-            npm run build:docker -- -t $PROJECT_NAME/$directory
+            time npm run build:docker -- -t $PROJECT_NAME/$directory
         else
             echo "Installing $directory..."
             yarn install
@@ -88,7 +88,7 @@ docker_build_and_push () {
         docker push $NAME
         
         echo "Releasing container to '$heroku_app_name'..."
-        heroku container:release web -a $heroku_app_name
+        time heroku container:release web -a $heroku_app_name
 
         echo "Deployed app to https://$heroku_app_name.herokuapp.com"
 
@@ -99,8 +99,8 @@ docker_build_and_push () {
 
 HEROKU_APP_NAME=$(prep_heroku_app_name "$PROJECT_NAME-$BITBUCKET_BRANCH")
 
-install_lint_test_and_build module true
-install_lint_test_and_build server false
+time install_lint_test_and_build module true
+time install_lint_test_and_build server false
 
-docker_build_and_push client
-docker_build_and_push server
+time docker_build_and_push client
+time docker_build_and_push server
