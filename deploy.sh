@@ -77,7 +77,7 @@ install_lint_test_and_build () {
 
         if [ "$use_docker" = true ]; then
             echo "Installing, testing, linting and building $directory using Docker..."
-            npm run build:docker
+            npm run build:docker -- -t $PROJECT_NAME/$directory
         else
             echo "Installing $directory..."
             yarn install
