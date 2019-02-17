@@ -37,6 +37,36 @@ prep_heroku_app_name () {
     echo $string | tr / - # Heroky doesn't allow "/" so replace it with "-"
 }
 
+install_lint_test_and_build () {
+    local directory=$1
+    local use_docker=$2
+
+    if [ -d $directory ]; then
+        echo "cd to $directory..."
+        cd ./$directory
+
+        if [ "$use_docker" = true ]; then
+            echo "Installing, testing, linting and building $directory using Docker..."
+            time npm run build:docker -- -t $PROJECT_NAME/$directory
+        else
+            echo "Installing $directory..."
+            yarn install
+
+            echo "Linting $directory..."
+            npm run lint
+            
+            echo "Testing $directory..."
+            npm test
+
+            echo "Building $directory..."
+            npm run build
+        fi
+
+        echo "cd to root..."
+        cd ../ 
+    fi
+}
+
 docker_build_and_push () {
     if [ -d $1 ]; then
         echo "cd to $1..."
@@ -58,7 +88,7 @@ docker_build_and_push () {
         docker push $NAME
         
         echo "Releasing container to '$heroku_app_name'..."
-        heroku container:release web -a $heroku_app_name
+        time heroku container:release web -a $heroku_app_name
 
         echo "Deployed app to https://$heroku_app_name.herokuapp.com"
 
@@ -67,41 +97,10 @@ docker_build_and_push () {
     fi
 }
 
-install_lint_test_and_build () {
-    local directory=$1
-    local use_docker=$2
-
-    if [ -d $directory ]; then
-        echo "cd to $directory..."
-        cd ./$directory
-
-        if [ "$use_docker" = true ]; then
-            echo "Installing, testing, linting and building $directory using Docker..."
-            npm run build:docker -- -t $PROJECT_NAME/$directory
-        else
-            echo "Installing $directory..."
-            yarn install
-
-            echo "Linting $directory..."
-            npm run lint
-            
-            echo "Testing $directory..."
-            npm test
-
-            echo "Building $directory..."
-            npm run build
-        fi
-
-        echo "cd to root..."
-        cd ../ 
-    fi
-}
-
 HEROKU_APP_NAME=$(prep_heroku_app_name "$PROJECT_NAME-$BITBUCKET_BRANCH")
 
-install_lint_test_and_build module true
-install_lint_test_and_build client false
-install_lint_test_and_build server false
+time install_lint_test_and_build module true
+time install_lint_test_and_build server false
 
-docker_build_and_push client &
-docker_build_and_push server
+time docker_build_and_push client
+time docker_build_and_push server
