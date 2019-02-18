@@ -8,19 +8,19 @@ proj=${repo%%.*}
 
 # Params
 HEROKU_API_KEY=$1
-echo "HEROKU_API_KEY $HEROKU_API_KEY" 
+echo HEROKU_API_KEY $HEROKU_API_KEY
 [ -z "$HEROKU_API_KEY" ] && { echo "Error: HEROKU_API_KEY not specified"; exit 1; }
 
-PROJECT_NAME=${2:-$proj}
-echo "PROJECT_NAME $PROJECT_NAME"
+PROJECT=${2:-$proj}
+echo PROJECT $PROJECT
 
-BITBUCKET_BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
-echo "BITBUCKET_BRANCH $BITBUCKET_BRANCH" 
+BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
+echo BRANCH $BRANCH
 
 BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
-echo "BITBUCKET_COMMIT $BITBUCKET_COMMIT"
+echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
-prep_heroku_app_name () {
+trim_string () {
     local string=$1
     local max_length=${2:-28}
     if [ ${#string} -gt $max_length ]; then 
@@ -34,57 +34,75 @@ prep_heroku_app_name () {
         done
         string=$tmp
     fi
-    echo $string | tr / - # Heroky doesn't allow "/" so replace it with "-"
+    echo $string
 }
 
-docker_build () {
-    local directory=$1
+heroku_app_name () {
+    local project=$1
+    local component=$(echo $2 | head -c 1)
+    local branch=${3////'-'} # Heroku doesn't allow "/" so replace it with "-"
+    echo $(trim_string $project-$component-$branch)
+}
 
-    if [ -d $directory ]; then
-        echo "cd to $directory..."
-        cd ./$directory
+build_dockerfile () {
+    local component=$1
+    local project=$2
+    local branch=$3
 
-        echo "Installing, testing, linting and building $directory using Docker..."
-        time npm run build:docker -- -t $PROJECT_NAME/$directory
+    if [ -d $component ]; then
+        echo "cd to $component..."
+        cd ./$component
 
-        echo "cd back to root..."
+        echo "Install, test, lint and build '$component' using Docker..."
+        time docker build . -q -t $project/$component:$branch
+
+        echo "cd up root..."
         cd ../ 
     fi
 }
 
-docker_build_and_push () {
-    if [ -d $1 ]; then
-        echo "cd to $1..."
-        cd ./$1
+login_to_heroku_docker () {
+    local heroku_api_key=$1
+    echo "Logging in to Heroku Docker Hub..."
+    docker login --username=_ --password=$heroku_api_key registry.heroku.com
+}
 
-        suffix="$(echo $1 | head -c 1)"
-        local heroku_app_name=$HEROKU_APP_NAME-$suffix
+deploy_docker_image () {
+    local component=$1
+    local project=$2
+    local branch=$3
+
+    if [ -d $component ]; then
+        echo "Building and pushing container for $component..."
+
+        local heroku_app_name=$(heroku_app_name $project $component $branch)
+        local image_id=$(docker images $project/$component:$branch --format "{{.ID}}")
+        local image_name="registry.heroku.com/$heroku_app_name/web"
+        
+        echo "Tagging $image_id as $image_name..."
+        docker tag $image_id $image_name
 
         echo "Creating app '$heroku_app_name'..."
         heroku create -a $heroku_app_name --region eu || true
 
-        echo "Building image '$heroku_app_name:$BITBUCKET_COMMIT' and pushing to Heroku..."
-        docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+        echo "Pushing image $image_name..."
+        time docker push $image_name
 
-        echo "Building and pushing container..."
-        ID=$(docker build . -q -t $heroku_app_name:$BITBUCKET_COMMIT)
-        NAME="registry.heroku.com/$heroku_app_name/web"
-        docker tag $ID $NAME
-        docker push $NAME
-        
         echo "Releasing container to '$heroku_app_name'..."
-        time heroku container:release web -a $heroku_app_name
+        heroku container:release web -a $heroku_app_name
 
         echo "Deployed app to https://$heroku_app_name.herokuapp.com"
-
-        echo "cd to root..."
-        cd ../
     fi
 }
 
-HEROKU_APP_NAME=$(prep_heroku_app_name "$PROJECT_NAME-$BITBUCKET_BRANCH")
+# URL   : http://[project]-[s|c]-[branch-name-short].herokuapp.com/directory
+# IMAGE : [project]/[component]:[branch-name]
 
-# TODO: use docker_build_and_push for module
-time docker_build module
-time docker_build_and_push client
-time docker_build_and_push server
+build_dockerfile module $PROJECT $BRANCH
+build_dockerfile client $PROJECT $BRANCH
+build_dockerfile server $PROJECT $BRANCH
+
+login_to_heroku_docker $HEROKU_API_KEY
+
+deploy_docker_image client $PROJECT $BRANCH
+deploy_docker_image server $PROJECT $BRANCH
