@@ -98,7 +98,7 @@ deploy_docker_image () {
 # URL   : http://[project]-[s|c]-[branch-name-short].herokuapp.com/directory
 # IMAGE : [project]/[component]:[branch-name]
 
-build_dockerfile module $PROJECT $BRANCH
+build_dockerfile module $PROJECT latest # TODO: fix branch here and in Client Dockerfile (COPY --from)
 build_dockerfile client $PROJECT $BRANCH
 build_dockerfile server $PROJECT $BRANCH
 
