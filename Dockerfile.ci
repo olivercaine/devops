@@ -1,5 +1,22 @@
-FROM node:8.15 as ci
+# Loosely based on https://hub.docker.com/r/atlassian/default-image/
+FROM node:8.15-alpine
 
-RUN npm set progress=false
-
+# Install dependencies
+RUN apk update
+RUN apk add bash curl git
 RUN curl https://cli-assets.heroku.com/install.sh | sh; heroku --version; which heroku;
+
+# Default to UTF-8 file.encoding
+ENV LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    LANGUAGE=C.UTF-8
+
+# Create dirs and users
+RUN mkdir -p /opt/atlassian/bitbucketci/agent/build
+#  \
+#     && sed -i '/[ -z \"PS1\" ] && return/a\\ncase $- in\n*i*) ;;\n*) return;;\nesac' /root/.bashrc \
+#     && useradd --create-home --shell /bin/bash --uid 1000 pipelines
+
+WORKDIR /opt/atlassian/bitbucketci/agent/build
+
+ENTRYPOINT /bin/bash
