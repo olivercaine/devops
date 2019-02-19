@@ -55,7 +55,7 @@ build_dockerfile () {
 
         echo "Install, test, lint and build '$component' using Docker..."
         if [ "$component" == 'module' ]; then
-            time docker build . -t $project/$component:$branch -f ./devops/Dockerfile.build
+            time docker build . -t $project/$component:$branch -f ./Dockerfile.build
         else
             time docker build . -t $project/$component:$branch
         fi
