@@ -54,7 +54,11 @@ build_dockerfile () {
         cd ./$component
 
         echo "Install, test, lint and build '$component' using Docker..."
-        time docker build . -q -t $project/$component:$branch
+        if [ "$component" == 'module' ]; then
+            time docker build . -q -t $project/$component:$branch -f ./devops/Dockerfile.build
+        else
+            time docker build . -q -t $project/$component:$branch
+        fi
 
         echo "cd up root..."
         cd ../ 
