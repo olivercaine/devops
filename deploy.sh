@@ -54,7 +54,11 @@ build_dockerfile () {
         cd ./$component
 
         echo "Install, test, lint and build '$component' using Docker..."
-        time docker build . -q -t $project/$component:$branch
+        if [ "$component" == 'module' ]; then
+            time docker build . -t $project/$component:$branch -f ../devops/Dockerfile.build
+        else
+            time docker build . -t $project/$component:$branch
+        fi
 
         echo "cd up root..."
         cd ../ 
@@ -98,7 +102,7 @@ deploy_docker_image () {
 # URL   : http://[project]-[s|c]-[branch-name-short].herokuapp.com/directory
 # IMAGE : [project]/[component]:[branch-name]
 
-build_dockerfile module $PROJECT latest # TODO: fix branch here and in Client Dockerfile (COPY --from)
+build_dockerfile module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
 build_dockerfile client $PROJECT $BRANCH
 build_dockerfile server $PROJECT $BRANCH
 
