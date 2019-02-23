@@ -1,4 +1,4 @@
-FROM bordellio/base:latest
+FROM boilerplate/ci:latest
 
 WORKDIR /project
 
