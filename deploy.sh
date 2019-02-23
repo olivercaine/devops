@@ -38,14 +38,13 @@ trim_string () {
 }
 
 heroku_app_name () {
-    # Convention: [project]-[s|c]-[trimmed-branch-name]
     local project=$1
     local component=$(echo $2 | head -c 1)
     local branch=${3////'-'} # Heroku doesn't allow "/" so replace it with "-"
     echo $(trim_string $project-$component-$branch)
 }
 
-build_project () {
+build_dockerfile () {
     local component=$1
     local project=$2
     local branch=$3
@@ -55,17 +54,12 @@ build_project () {
         cd ./$component
 
         echo "Install, test, lint and build '$component' using Docker..."
-        
-        # Hack to work around Dockerfile failing on copy if node_modules doesn't exist
-        mkdir -p node_modules
-        
         if [ "$component" == 'module' ]; then
-            time docker build . -t $project/$component:$branch -f ../devops/Dockerfile.project
+            time docker build . -t $project/$component:$branch -f ../devops/Dockerfile.build
         else
             time docker build . -t $project/$component:$branch
         fi
 
-        echo "Successfully built '$project/$component:$branch'"
         echo "cd up root..."
         cd ../ 
     fi
@@ -78,7 +72,6 @@ login_to_heroku_docker () {
 }
 
 deploy_docker_image () {
-    # Convention: [project]/[component]:[branch-name]
     local component=$1
     local project=$2
     local branch=$3
@@ -106,36 +99,14 @@ deploy_docker_image () {
     fi
 }
 
-# build_ci_mage () {
-#     local image=$1
-#     cd ./devops
-#         time docker build . \
-#             -f ./Dockerfile.$image \
-#             -t olliecaine/$image:latest
-#         echo "Successfully built $image image"
-#     cd ../
-# }
+# URL   : http://[project]-[s|c]-[branch-name-short].herokuapp.com/directory
+# IMAGE : [project]/[component]:[branch-name]
 
-build_image () {
-    local project=$1
-    local branch=$2
-    local image=$3
-    cd ./devops
-        time docker build . \
-            -f ./Dockerfile.$image \
-            -t $project/$image:latest
-        echo "Successfully built $image image"
-    cd ../
-}
-
-# build_ci_mage "ci"
-build_image $PROJECT $BRANCH "base"
-
-build_project module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
-build_project client $PROJECT $BRANCH
-# build_project server $PROJECT $BRANCH
+build_dockerfile module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
+build_dockerfile client $PROJECT $BRANCH
+build_dockerfile server $PROJECT $BRANCH
 
 login_to_heroku_docker $HEROKU_API_KEY
 
 deploy_docker_image client $PROJECT $BRANCH
-# deploy_docker_image server $PROJECT $BRANCH
+deploy_docker_image server $PROJECT $BRANCH
