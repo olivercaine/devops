@@ -3,7 +3,8 @@ FROM bordellio/base:latest
 WORKDIR /project
 
 # Install dependencies
-COPY node_modules package*.json ./
+COPY node_modules* ./node_modules
+COPY package*.json ./
 RUN npm install
 
 # Lint, test and build app
