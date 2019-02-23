@@ -2,8 +2,10 @@ FROM bordellio/base:latest
 
 WORKDIR /project
 
+# Copy up existing node_modules
+COPY node_modules .
+
 # Install dependencies
-COPY node_modules* ./node_modules
 COPY package*.json ./
 RUN npm install
 

@@ -55,6 +55,10 @@ build_project () {
         cd ./$component
 
         echo "Install, test, lint and build '$component' using Docker..."
+        
+        # Hack to work around Dockerfile failing on copy if node_modules doesn't exist
+        mkdir -p node_modules
+        
         if [ "$component" == 'module' ]; then
             time docker build . -t $project/$component:$branch -f ../devops/Dockerfile.project
         else
