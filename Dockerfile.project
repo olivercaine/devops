@@ -1,4 +1,4 @@
-FROM bordellio/base
+FROM bordellio/base:latest
 
 # Install Chrome
 RUN sed -i -e 's/v3.8/edge/g' /etc/apk/repositories

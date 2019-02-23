@@ -108,7 +108,7 @@ build_base_image () {
     cd ./devops
         time docker build . \
             -f ./Dockerfile.base \
-            -t $project/base:$branch
+            -t $project/base:latest
         echo "Successfully built base image"
     cd ../
 }
