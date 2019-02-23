@@ -38,6 +38,7 @@ trim_string () {
 }
 
 heroku_app_name () {
+    # Convention: [project]-[s|c]-[trimmed-branch-name]
     local project=$1
     local component=$(echo $2 | head -c 1)
     local branch=${3////'-'} # Heroku doesn't allow "/" so replace it with "-"
@@ -55,7 +56,7 @@ build_dockerfile () {
 
         echo "Install, test, lint and build '$component' using Docker..."
         if [ "$component" == 'module' ]; then
-            time docker build . -t $project/$component:$branch -f ../devops/Dockerfile.build
+            time docker build . -t $project/$component:$branch -f ../devops/Dockerfile.project
         else
             time docker build . -t $project/$component:$branch
         fi
@@ -72,6 +73,7 @@ login_to_heroku_docker () {
 }
 
 deploy_docker_image () {
+    # Convention: [project]/[component]:[branch-name]
     local component=$1
     local project=$2
     local branch=$3
@@ -99,8 +101,16 @@ deploy_docker_image () {
     fi
 }
 
-# URL   : http://[project]-[s|c]-[branch-name-short].herokuapp.com/directory
-# IMAGE : [project]/[component]:[branch-name]
+build_base_image () {
+    local project=$1
+    cd ./devops
+        time docker build . \
+            -f ./Dockerfile.base \
+            -t $project/base
+    cd ../
+}
+
+build_base_image $PROJECT $BRANCH
 
 build_dockerfile module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
 build_dockerfile client $PROJECT $BRANCH

@@ -1,3 +1,0 @@
-FROM node:8.15-alpine
-
-RUN npm set progress=false
