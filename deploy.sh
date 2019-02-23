@@ -114,9 +114,9 @@ build_base_image $PROJECT $BRANCH
 
 build_dockerfile module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
 build_dockerfile client $PROJECT $BRANCH
-build_dockerfile server $PROJECT $BRANCH
+# build_dockerfile server $PROJECT $BRANCH
 
 login_to_heroku_docker $HEROKU_API_KEY
 
 deploy_docker_image client $PROJECT $BRANCH
-deploy_docker_image server $PROJECT $BRANCH
+# deploy_docker_image server $PROJECT $BRANCH
