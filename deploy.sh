@@ -26,24 +26,23 @@ heroku_app_name () {
     echo $(trim_string $project-$component-$branch)
 }
 
-build_dockerfile () {
+build_project () {
     # Image name convention: [project]/[component]:[branch-name]
     local component=$1
     local project=$2
     local branch=$3
 
     if [ -d $component ]; then
-        echo "cd to $component..."
+        echo "Building image for $component..."
         cd ./$component
 
-        echo "Install, test, lint and build '$component' using Docker..."
+        echo "Install, lint, test and build '$component' using Docker..."
         if [ "$component" == 'module' ]; then
-            time docker build . -t $project/$component:$branch -f ../devops/Dockerfile.build
+            time docker build . -t $project/$component:$branch -f ../devops/Dockerfile.base
         else
             time docker build . -t $project/$component:$branch
         fi
 
-        echo "cd up root..."
         cd ../ 
     fi
 }
@@ -88,6 +87,7 @@ slash_to_underscore () {
     echo ${string//\//'-'} 
 }
 
+# TODO: tidy up below bit
 repo_url=$(git config --get remote.origin.url)
 repo=${repo_url##*/}
 proj=${repo%%.*}
@@ -106,9 +106,9 @@ trimmed_branch=$(slash_to_underscore $BRANCH)
 BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
-build_dockerfile module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
-build_dockerfile client $PROJECT $trimmed_branch
-build_dockerfile server $PROJECT $trimmed_branch
+build_project module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
+build_project client $PROJECT $trimmed_branch
+build_project server $PROJECT $trimmed_branch
 
 login_to_heroku_docker $HEROKU_API_KEY
 
