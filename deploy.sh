@@ -38,7 +38,7 @@ build_project () {
 
         echo "Install, lint, test and build '$component' using Docker..."
         if [ "$component" == 'module' ]; then
-            time docker build . -t $project/$component:$branch -f ../devops/Dockerfile.base
+            time docker build . -t $project/$component:$branch -f ../devops/Dockerfile.project
         else
             time docker build . -t $project/$component:$branch
         fi
@@ -87,6 +87,13 @@ slash_to_underscore () {
     echo ${string//\//'-'} 
 }
 
+build_base_image () {
+    # TODO Tag this as project specific (e.g. recipes/base:latest) once I've worked out generic solution
+    time docker build . \
+        -f ./devops/Dockerfile.base \
+        -t base:latest
+}
+
 # TODO: tidy up below bit
 repo_url=$(git config --get remote.origin.url)
 repo=${repo_url##*/}
@@ -105,6 +112,8 @@ trimmed_branch=$(slash_to_underscore $BRANCH)
 
 BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
+
+build_base_image
 
 build_project module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
 build_project client $PROJECT $trimmed_branch

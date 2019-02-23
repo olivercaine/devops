@@ -12,13 +12,3 @@ ENV CHROME_BIN /usr/bin/chromium-browser
 RUN npm set progress=false
 
 WORKDIR /project
-
-# Install dependencies
-COPY package*.json ./
-RUN npm install
-
-# Lint, test and build app
-COPY . ./
-RUN npm run lint
-RUN npm run test
-RUN npm run build
