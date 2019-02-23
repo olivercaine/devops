@@ -85,7 +85,7 @@ deploy_docker_image () {
 
 slash_to_underscore () {
     local string=$1
-    echo ${string/\//'-'} 
+    echo ${string//\//'-'} 
 }
 
 repo_url=$(git config --get remote.origin.url)
