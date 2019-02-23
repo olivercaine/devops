@@ -27,6 +27,7 @@ heroku_app_name () {
 }
 
 build_dockerfile () {
+    # Image name convention: [project]/[component]:[branch-name]
     local component=$1
     local project=$2
     local branch=$3
@@ -54,6 +55,7 @@ login_to_heroku_docker () {
 }
 
 deploy_docker_image () {
+    # App name convention: [project]-[s|c]-[branch-name-short]
     local component=$1
     local project=$2
     local branch=$3
@@ -82,8 +84,8 @@ deploy_docker_image () {
 }
 
 slash_to_underscore () {
-    local string="$1"
-    echo ${string//\//'-'} 
+    local string=$1
+    echo ${string/\//'-'} 
 }
 
 repo_url=$(git config --get remote.origin.url)
@@ -99,22 +101,16 @@ PROJECT=${2:-$proj}
 echo PROJECT $PROJECT
 
 BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
-echo BRANCH $BRANCH
-BRANCH=slash_to_underscore $BRANCH
-echo BRANCH $BRANCH
+trimmed_branch=$(slash_to_underscore $BRANCH)
 
 BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
-
-# URL   : http://[project]-[s|c]-[branch-name-short].herokuapp.com/directory
-# IMAGE : [project]/[component]:[branch-name]
-
 build_dockerfile module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
-build_dockerfile client $PROJECT $BRANCH
-build_dockerfile server $PROJECT $BRANCH
+build_dockerfile client $PROJECT $trimmed_branch
+build_dockerfile server $PROJECT $trimmed_branch
 
 login_to_heroku_docker $HEROKU_API_KEY
 
-deploy_docker_image client $PROJECT $BRANCH
-deploy_docker_image server $PROJECT $BRANCH
+deploy_docker_image client $PROJECT $trimmed_branch
+deploy_docker_image server $PROJECT $trimmed_branch
