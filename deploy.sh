@@ -61,6 +61,7 @@ build_project () {
             time docker build . -t $project/$component:$branch
         fi
 
+        echo "Successfully built '$project/$component:$branch'"
         echo "cd up root..."
         cd ../ 
     fi
@@ -103,10 +104,12 @@ deploy_docker_image () {
 
 build_base_image () {
     local project=$1
+    local branch=$2
     cd ./devops
         time docker build . \
             -f ./Dockerfile.base \
-            -t $project/base
+            -t $project/base:$branch
+        echo "Successfully built base image"
     cd ../
 }
 
