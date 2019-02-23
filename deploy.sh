@@ -106,17 +106,17 @@ deploy_docker_image () {
     fi
 }
 
-build_ci_mage () {
-    local project=$1
-    local branch=$2
-    local image=$3
-    cd ./devops
-        time docker build . \
-            -f ./Dockerfile.$image \
-            -t boilerplate/$image:latest
-        echo "Successfully built $image image"
-    cd ../
-}
+# build_ci_mage () {
+#     local project=$1
+#     local branch=$2
+#     local image=$3
+#     cd ./devops
+#         time docker build . \
+#             -f ./Dockerfile.$image \
+#             -t boilerplate/$image:latest
+#         echo "Successfully built $image image"
+#     cd ../
+# }
 
 build_image () {
     local project=$1
@@ -130,7 +130,7 @@ build_image () {
     cd ../
 }
 
-build_ci_mage $PROJECT $BRANCH "ci"
+# build_ci_mage $PROJECT $BRANCH "ci"
 build_image $PROJECT $BRANCH "base"
 
 build_project module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
