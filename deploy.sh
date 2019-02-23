@@ -2,24 +2,6 @@
 
 set -e # Exit on non-zero exit value
 
-repo_url=$(git config --get remote.origin.url)
-repo=${repo_url##*/}
-proj=${repo%%.*}
-
-# Params
-HEROKU_API_KEY=$1
-echo HEROKU_API_KEY $HEROKU_API_KEY
-[ -z "$HEROKU_API_KEY" ] && { echo "Error: HEROKU_API_KEY not specified"; exit 1; }
-
-PROJECT=${2:-$proj}
-echo PROJECT $PROJECT
-
-BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
-echo BRANCH $BRANCH
-
-BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
-echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
-
 trim_string () {
     local string=$1
     local max_length=${2:-28}
@@ -98,6 +80,31 @@ deploy_docker_image () {
         echo "Deployed app to https://$heroku_app_name.herokuapp.com"
     fi
 }
+
+slash_to_underscore () {
+    local string="$1"
+    echo ${string//\//'-'} 
+}
+
+repo_url=$(git config --get remote.origin.url)
+repo=${repo_url##*/}
+proj=${repo%%.*}
+
+# Params
+HEROKU_API_KEY=$1
+echo HEROKU_API_KEY $HEROKU_API_KEY
+[ -z "$HEROKU_API_KEY" ] && { echo "Error: HEROKU_API_KEY not specified"; exit 1; }
+
+PROJECT=${2:-$proj}
+echo PROJECT $PROJECT
+
+BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
+echo BRANCH $BRANCH
+BRANCH=slash_to_underscore $BRANCH
+
+BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
+echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
+
 
 # URL   : http://[project]-[s|c]-[branch-name-short].herokuapp.com/directory
 # IMAGE : [project]/[component]:[branch-name]
