@@ -101,6 +101,7 @@ echo PROJECT $PROJECT
 BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
 echo BRANCH $BRANCH
 BRANCH=slash_to_underscore $BRANCH
+echo BRANCH $BRANCH
 
 BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
