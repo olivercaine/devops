@@ -88,10 +88,14 @@ slash_to_underscore () {
 }
 
 build_base_image () {
-    # TODO Tag this as project specific (e.g. recipes/base:latest) once I've worked out generic solution
-    time docker build . \
-        -f ./devops/Dockerfile.base \
-        -t base:latest
+    if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
+        # TODO Tag this as project specific (e.g. recipes/base:latest) once I've worked out generic solution
+        time docker build . \
+            -f ./devops/Dockerfile.base \
+            -t base:latest
+    else 
+        echo "Base image already exists..."
+    fi
 }
 
 # TODO: tidy up below bit
