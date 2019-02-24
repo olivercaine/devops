@@ -19,10 +19,15 @@ trim_string () {
     echo $string
 }
 
+slash_to_underscore () {
+    local string=$1
+    echo ${string//\//'-'} 
+}
+
 heroku_app_name () {
     local project=$1
     local component=$(echo $2 | head -c 1)
-    local branch=${3////'-'} # Heroku doesn't allow "/" so replace it with "-"
+    local branch=$(slash_to_underscore $3)
     echo $(trim_string $project-$component-$branch)
 }
 
@@ -80,11 +85,6 @@ deploy_docker_image () {
 
         echo "Deployed app to https://$heroku_app_name.herokuapp.com"
     fi
-}
-
-slash_to_underscore () {
-    local string=$1
-    echo ${string//\//'-'} 
 }
 
 build_base_image () {
