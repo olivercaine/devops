@@ -11,4 +11,15 @@ ENV CHROME_BIN /usr/bin/chromium-browser
 
 RUN npm set progress=false
 
+# Create dependency cache
+COPY /module/package-lock.json /module/
+RUN npm install --prefix=module
+
+COPY /client/package-lock.json /client/
+RUN npm install --prefix=client
+
+# COPY /server/package-lock.json /server/
+# RUN npm install --prefix=server
+# END: Create dependency cache
+
 WORKDIR /project
