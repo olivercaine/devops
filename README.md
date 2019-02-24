@@ -5,12 +5,11 @@ Note: I'm not currently sure which image Base is instantiated by.
 
 ```mermaid
 graph BT;
-    Base-->CI
-	    CI-.->Common    
-    Base-.->Common
-	    Common-->a["Project [a]"]
-	    Common-->b["Project [b]"]
-    	Common-->c["Project [c]"]   			
+    NodeAlpine-->CI
+    NodeAlpine-.->Base
+	    Base-->a["Project [a]"]
+	    Base-->b["Project [b]"]
+    	Base-->c["Project [c]"]   			
 ```
 
 ## Helpful commands
