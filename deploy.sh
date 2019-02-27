@@ -114,13 +114,14 @@ trimmed_branch=$(slash_to_underscore $BRANCH)
 BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
+# Build
 build_base_image
 
 build_project module $PROJECT $trimmed_branch # TODO: fix branch here and in Client Dockerfile (COPY --from)
-# build_project client $PROJECT $trimmed_branch
+build_project client $PROJECT $trimmed_branch
 # build_project server $PROJECT $trimmed_branch
 
-# login_to_heroku_docker $HEROKU_API_KEY
+login_to_heroku_docker $HEROKU_API_KEY
 
-# deploy_docker_image client $PROJECT $trimmed_branch
+deploy_docker_image client $PROJECT $trimmed_branch
 # deploy_docker_image server $PROJECT $trimmed_branch
