@@ -7,9 +7,9 @@ Note: I'm not currently sure which image Base is instantiated by.
 graph BT;
     NodeAlpine-->CI
     NodeAlpine-.->Base
-	    Base-->a["Project [a]"]
-	    Base-->b["Project [b]"]
-    	Base-->c["Project [c]"]   			
+    	Base-->a["Project [a]"]
+    	Base-->b["Project [b]"]
+    	Base-->c["Project [c]"]
 ```
 
 ## Helpful commands
