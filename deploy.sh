@@ -42,11 +42,7 @@ build_project () {
         cd ./$component
 
         echo "Install, lint, test and build '$component' using Docker..."
-        if [ "$component" == 'module' ]; then
-            time docker build . -t $project/$component:$branch -f ../devops/Dockerfile.project
-        else
-            time docker build . -t $project/$component:$branch
-        fi
+        time docker build . -t $project/$component:$branch
 
         cd ../ 
     fi
@@ -89,10 +85,10 @@ deploy_docker_image () {
 
 build_base_image () {
     if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
-        # TODO Tag this as project specific (e.g. recipes/base:latest) once I've worked out generic solution
+        echo "Building base image..."
         time docker build . \
             -f ./devops/Dockerfile.base \
-            -t base:latest
+            -t base:latest # TODO Tag this as project and branch specific (e.g. recipes/base:latest)
     else 
         echo "Base image already exists..."
     fi
@@ -117,6 +113,7 @@ trimmed_branch=$(slash_to_underscore $BRANCH)
 BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
 echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
+# Build
 build_base_image
 
 build_project module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)

@@ -1,14 +1,17 @@
 FROM node:8.15-alpine
 
 # Install Chrome
-RUN sed -i -e 's/v3.8/edge/g' /etc/apk/repositories
-RUN apk add --no-cache build-base
-RUN apk add --no-cache chromium-chromedriver 
-RUN apk add --no-cache chromium 
-RUN apk upgrade --no-cache --available
-ENV CHROME_BIN /usr/bin/chromium-browser
-# End: Install Chrome
+RUN apk update && apk upgrade && \
+    echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
+    echo @edge http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
+    apk add --no-cache \
+      chromium@edge \
+      harfbuzz@edge \
+      nss@edge
+ENV CHROME_BIN=/usr/bin/chromium-browser \
+    CHROME_PATH=/usr/lib/chromium/      
 
+# Speed up NPM by preventing it from displaying progress
 RUN npm set progress=false
 
 # Create dependency cache
