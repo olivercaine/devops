@@ -117,7 +117,7 @@ echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 # Build
 build_base_image
 
-build_project module $PROJECT $trimmed_branch # TODO: fix branch here and in Client Dockerfile (COPY --from)
+build_project module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
 build_project client $PROJECT $trimmed_branch
 # build_project server $PROJECT $trimmed_branch
 
