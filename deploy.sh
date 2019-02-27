@@ -84,15 +84,14 @@ deploy_docker_image () {
 }
 
 build_base_image () {
-    # if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
-        # TODO Tag this as project specific (e.g. recipes/base:latest) once I've worked out generic solution
+    if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
         echo "Building base image..."
         time docker build . \
             -f ./devops/Dockerfile.base \
-            -t base:latest
-    # else 
-        # echo "Base image already exists..."
-    # fi
+            -t base:latest # TODO Tag this as project and branch specific (e.g. recipes/base:latest)
+    else 
+        echo "Base image already exists..."
+    fi
 }
 
 # TODO: tidy up below bit
