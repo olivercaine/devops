@@ -13,6 +13,7 @@ ENV CHROME_BIN=/usr/bin/chromium-browser \
 
 # Speed up NPM by preventing it from displaying progress
 RUN npm set progress=false
+RUN npm config set depth 0
 
 # Create dependency cache
 COPY /module/package*.json /module/
