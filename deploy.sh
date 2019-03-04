@@ -24,15 +24,22 @@ slash_to_underscore () {
     echo ${string//\//'-'} 
 }
 
-heroku_app_name () {
+# App name convention: [project]-[trimmed-branch]-[c|s]
+# Max length = 30 characters
+heroku_app_name () { 
     local project=$1
     local component=$(echo $2 | head -c 1)
     local branch=$(slash_to_underscore $3)
-    echo $(trim_string $project-$component-$branch)
+    echo "$(trim_string $project-$branch)-$component"
 }
 
+heroku_app_url () {
+    local heroku_app_name=$1
+    echo "http://$1.herokuapp.com/"
+}
+
+# Image name convention: [project]/[component]:[branch-name]
 build_project () {
-    # Image name convention: [project]/[component]:[branch-name]
     local component=$1
     local project=$2
     local branch=$3
@@ -55,7 +62,6 @@ login_to_heroku_docker () {
 }
 
 deploy_docker_image () {
-    # App name convention: [project]-[s|c]-[branch-name-short]
     local component=$1
     local project=$2
     local branch=$3
@@ -79,7 +85,7 @@ deploy_docker_image () {
         echo "Releasing container to '$heroku_app_name'..."
         heroku container:release web -a $heroku_app_name
 
-        echo "Deployed app to https://$heroku_app_name.herokuapp.com"
+        echo "Deployed app to $(heroku_app_url $heroku_app_name)"
     fi
 }
 
