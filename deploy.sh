@@ -90,13 +90,14 @@ deploy_docker_image () {
 }
 
 build_base_image () {
+    echo "Checking in base image exists..."
     if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
-        echo "Building base image..."
+        echo "Base image doesn't exist. Building now..."
         time docker build . \
             -f ./devops/Dockerfile.base \
             -t base:latest # TODO Tag this as project and branch specific (e.g. recipes/base:latest)
     else 
-        echo "Base image already exists..."
+        echo "Bypassing build of base image as it already exists..."
     fi
 }
 
