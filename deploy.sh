@@ -90,7 +90,7 @@ deploy_docker_image () {
 }
 
 build_base_image () {
-    echo "Checking in base image exists..."
+    echo "Checking if base image exists..."
     if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
         echo "Base image doesn't exist. Building now..."
         time docker build . \
