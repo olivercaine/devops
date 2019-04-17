@@ -15,8 +15,9 @@ graph BT;
 ## Helpful commands
 
 ```
-# Run as CI when developing locall (sharing current repo code)
+# Run as CI when developing locally (sharing current repo code)
 docker run --rm -it -v ${PWD}:/opt/atlassian/bitbucketci/agent/build atlassian/default-image
 
 # docker build "$(npm config get cache)" -f ./Dockerfile.base -t bordellio/build-base:latest
+
 ```
