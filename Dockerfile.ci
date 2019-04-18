@@ -1,4 +1,5 @@
-# `docker build . -f Dockerfile.ci -t olliecaine/ci; docker push olliecaine/ci;`
+# Updating image: `docker build . -f Dockerfile.ci -t olliecaine/ci; docker push olliecaine/ci;`
+# Running locally: `docker run --rm -it -v ${PWD}:/opt/atlassian/bitbucketci/agent/build atlassian/default-image`
 
 FROM atlassian/default-image
 RUN curl https://cli-assets.heroku.com/install.sh | sh; heroku --version; which heroku;
