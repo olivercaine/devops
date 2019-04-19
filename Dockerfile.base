@@ -18,8 +18,8 @@ RUN npm set progress=false
 RUN npm config set depth 0
 
 # Create dependency cache
-# COPY /module/package*.json /module/
-# RUN npm install --prefix=module
+COPY /module/package*.json /module/
+RUN npm install --prefix=module
 
 COPY /client/package*.json /client/
 RUN npm install --prefix=client
