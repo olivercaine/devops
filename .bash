@@ -11,17 +11,11 @@ function install_tools {
     echo "Homebrew Cask..."
     brew tap caskroom/cask
 
-    echo "Installing dev packages..."
-    brew install node yarn
-
     echo "Installing Docker packages..."
     brew install docker docker-compose docker-machine xhyve docker-machine-driver-xhyve
 
     echo "Installing API and database apps..."
     brew cask install docker
-
-    echo "Installing Node Version Manager..."
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
 }
 
 function seed {
@@ -31,32 +25,6 @@ function seed {
     git subtree add --prefix=client https://github.com/olivercaine/react-redux-starter-kit-extended.git modpack/latest --squash
     git subtree add --prefix=module https://github.com/olivercaine/typescript-library-boilerplate.git modpack/latest --squash
     git subtree add --prefix=server https://github.com/olivercaine/express-typescript-boilerplate.git modpack/latest --squash
-}
-
-# TODO: Replace with docker-compose
-function dev {
-    local run_server=${1:-false}
-
-    echo "Starting Docker..."
-    open -a docker &
-
-    echo "Performing git pull..."
-    git pull &
-
-    echo "Starting client (inc Storybook)..."
-    code ./client
-    open http://localhost:3000
-    open http://localhost:6006
-
-    if [ $run_server = true ]; then
-        read -p "Starting server. Press enter once Docker is running..." 
-        code ./server
-        cp -R ./server/.env.dev ./server/.env
-        open http://localhost:3001/swagger
-
-        echo "Starting database in Docker..."
-        ./database/start.sh
-    fi
 }
 
 function update_client {
