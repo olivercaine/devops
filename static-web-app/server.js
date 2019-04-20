@@ -1,14 +1,23 @@
 var express = require('express')
 
-var server = express()
-server.use('/', express.static(__dirname + '/'))
-
-server.get('/*', function (req, res) {
+var app = express()
+app.use('/', express.static(__dirname + '/'))
+app.get('/*', function (req, res) {
   res.sendFile(__dirname + '/index.html')
 })
 
-// Another change via subtree
 var port = process.env.PORT || 3000
-server.listen(port, function () {
+var server = app.listen(port, function () {
   console.log('server listening on port ' + port)
 })
+
+function shutDown () {
+  console.log('Received kill signal, shutting down gracefully')
+  server.close(() => {
+    console.log('Closed out remaining connections')
+    process.exit(0)
+  })
+}
+
+process.on('SIGTERM', shutDown)
+process.on('SIGINT', shutDown)
