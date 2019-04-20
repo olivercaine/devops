@@ -21,7 +21,6 @@ function install_tools {
 function seed {
     git submodule add -b master https://github.com/olivercaine/common.git common
     git submodule add -b master https://github.com/olivercaine/devops.git devops
-    git submodule add -b master https://github.com/olivercaine/docker-postgres.git database
     git subtree add --prefix=client https://github.com/olivercaine/react-redux-starter-kit-extended.git modpack/latest --squash
     git subtree add --prefix=module https://github.com/olivercaine/typescript-library-boilerplate.git modpack/latest --squash
     git subtree add --prefix=server https://github.com/olivercaine/express-typescript-boilerplate.git modpack/latest --squash
