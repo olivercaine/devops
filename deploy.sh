@@ -121,7 +121,7 @@ if [ -n "$HEROKU_API_KEY" ]; then
     build_base_image
     build_project module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
     build_project client $PROJECT $trimmed_branch
-    # build_project server $PROJECT $trimmed_branch
+    build_project server $PROJECT $trimmed_branch
 
     # Deploy
     login_to_heroku_docker $HEROKU_API_KEY
