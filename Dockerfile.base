@@ -2,16 +2,16 @@ FROM node:8.15-alpine
 
 # Install Chrome
 RUN apk update && apk upgrade && \
-    echo  http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
-    echo  http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
+    echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
+    echo @edge http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
     apk add --no-cache \
-      chromium \
-      nss \
-      make \
-      python \      
-      freetype \
-      harfbuzz \
-      ttf-freefont
+      chromium@edge \
+      nss@edge \
+      make@edge \
+      python@edge \      
+      freetype@edge \
+      harfbuzz@edge \
+      ttf-freefont@edge
 ENV CHROME_BIN=/usr/bin/chromium-browser \
     CHROME_PATH=/usr/lib/chromium/      
 
