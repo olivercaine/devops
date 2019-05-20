@@ -30,4 +30,7 @@ RUN npm config set depth 0
 # RUN npm install --prefix=server
 # END: Create dependency cache
 
+# Future installs should try to use this cache
+RUN npm set prefer-offline=true
+
 WORKDIR /project
