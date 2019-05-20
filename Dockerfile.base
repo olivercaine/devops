@@ -13,17 +13,11 @@ RUN apk update && apk upgrade && \
       harfbuzz@edge \
       ttf-freefont@edge
 ENV CHROME_BIN=/usr/bin/chromium-browser \
-    CHROME_PATH=/usr/lib/chromium/   
-
-RUN apk update && apk upgrade && \
-    echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
-    echo @edge http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
-    apk add --no-cache \
-      git@edge
+    CHROME_PATH=/usr/lib/chromium/      
 
 # Speed up NPM by preventing it from displaying progress
-RUN npm set progress=false
 RUN npm set prefer-offline=true
+RUN npm set progress=false
 RUN npm config set depth 0
 
 # Create dependency cache
