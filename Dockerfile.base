@@ -1,5 +1,9 @@
 FROM node:8.15-alpine
 
+# Speed up NPM by preventing it from displaying progress
+RUN npm set progress=false
+RUN npm config set depth 0
+
 # Install Chrome
 RUN apk update && apk upgrade && \
     echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
@@ -14,10 +18,6 @@ RUN apk update && apk upgrade && \
       ttf-freefont@edge
 ENV CHROME_BIN=/usr/bin/chromium-browser \
     CHROME_PATH=/usr/lib/chromium/      
-
-# Speed up NPM by preventing it from displaying progress
-RUN npm set progress=false
-RUN npm config set depth 0
 
 # Create dependency cache
 # COPY /module/package*.json /module/
