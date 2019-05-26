@@ -45,13 +45,8 @@ build_project () {
     local branch=$3
 
     if [ -d $component ]; then
-        echo "Building image for $component..."
-        cd ./$component
-
-        echo "Install, lint, test and build '$component' using Docker..."
-        time docker build . -t $project/$component:$branch
-
-        cd ../ 
+        echo "Install, lint, test and build image for '$component' using Docker..."
+        time BRANCH=$branch PROJECT=$project docker-compose -f docker-compose.yml build $component
     fi
 }
 
