@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e # Exit on non-zero exit value
+set -e # Exit on non-zero
 
-trim_string () {
+trim_string_to_length () {
     local string=$1
     local max_length=${2:-28}
     if [ ${#string} -gt $max_length ]; then 
@@ -19,27 +19,14 @@ trim_string () {
     echo $string
 }
 
-slash_to_underscore () {
+# Replaces slashes with underscores
+replace_slashes_with_underscores () {
     local string=$1
     echo ${string//\//'-'} 
 }
 
-# App name convention: [project]-[trimmed-branch]-[c|s]
-# Max length = 30 characters
-heroku_app_name () { 
-    local project=$1
-    local component=$(echo $2 | head -c 1)
-    local branch=$(slash_to_underscore $3)
-    echo "$(trim_string $project-$branch)-$component"
-}
-
-heroku_app_url () {
-    local heroku_app_name=$1
-    echo "https://$1.herokuapp.com/"
-}
-
-# Image name convention: [project]/[component]:[branch-name]
-build_project () {
+# Builds module into Docker release image
+build_module () {
     local component=$1
     local project=$2
     local branch=$3
@@ -50,6 +37,17 @@ build_project () {
     fi
 }
 
+# Create Heroku app name based on variables
+heroku_app_name () { 
+    # Convention: [project]-[trimmed-branch]-[c|s]
+    # Max length = 30 characters
+    local project=$1
+    local component=$(echo $2 | head -c 1)
+    local branch=$(replace_slashes_with_underscores $3)
+    echo "$(trim_string_to_length $project-$branch)-$component"
+}
+
+# Push Docker release image to Heroku
 deploy_docker_image () {
     local component=$1
     local project=$2
@@ -74,17 +72,18 @@ deploy_docker_image () {
         echo "Releasing container to '$heroku_app_name'..."
         heroku container:release web -a $heroku_app_name
 
-        echo "Deployed app to $(heroku_app_url $heroku_app_name)"
+        echo "Deployed app to https://$heroku_app_name.herokuapp.com"
     fi
 }
 
+# Builds the image which contains Node version and build dependencies
 build_base_image () {
     echo "Checking if base image exists..."
     if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
         echo "Base image doesn't exist. Building now..."
         time docker build . \
             -f ./devops/Dockerfile.base \
-            -t base:latest # TODO Tag this as project and branch specific (e.g. recipes/base:latest)
+            -t base:latest
     else 
         echo "Bypassing build of base image as it already exists..."
     fi
@@ -101,7 +100,7 @@ if [ -n "$HEROKU_API_KEY" ]; then
     echo PROJECT $PROJECT
 
     BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
-    trimmed_branch=$(slash_to_underscore $BRANCH)
+    trimmed_branch=$(replace_slashes_with_underscores $BRANCH)
 
     BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
     echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
@@ -109,9 +108,9 @@ if [ -n "$HEROKU_API_KEY" ]; then
     # Build
     build_base_image
     cp ./server/.env.dev ./server/.env
-    # build_project module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
-    build_project client $PROJECT $trimmed_branch
-    build_project server $PROJECT $trimmed_branch
+    # build_module shared $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
+    build_module client $PROJECT $trimmed_branch
+    build_module server $PROJECT $trimmed_branch
 
     # Deploy
     docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
