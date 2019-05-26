@@ -2,8 +2,6 @@
 
 source ~/.nvm/nvm.sh
 
-alias bash_project='code $(dirname $0)/.functions'
-
 function seed {
     git submodule add -b master https://github.com/olivercaine/common.git common
     git submodule add -b master https://github.com/olivercaine/devops.git devops

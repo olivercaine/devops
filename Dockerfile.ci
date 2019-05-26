@@ -1,5 +1,5 @@
-# Updating image: `docker build . -f Dockerfile.ci -t olliecaine/ci:2; docker push olliecaine/ci:2;`
-# Running locally: `docker run --rm -it -v ${PWD}:/opt/atlassian/bitbucketci/agent/build atlassian/default-image`
+# Updating image: docker build . -f Dockerfile.ci -t olliecaine/ci && docker push olliecaine/ci
+# Running locally: docker run --rm -it -v ${PWD}:/opt/atlassian/bitbucketci/agent/build atlassian/default-image
 
 FROM atlassian/default-image
 
