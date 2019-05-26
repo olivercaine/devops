@@ -108,9 +108,9 @@ if [ -n "$HEROKU_API_KEY" ]; then
 
     # Build
     build_base_image
+    cp ./server/.env.dev ./server/.env
     # build_project module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
     build_project client $PROJECT $trimmed_branch
-    cp ./server/.env.dev ./server/.env
     build_project server $PROJECT $trimmed_branch
 
     # Deploy
