@@ -50,12 +50,6 @@ build_project () {
     fi
 }
 
-login_to_heroku_docker () {
-    local heroku_api_key=$1
-    echo "Logging in to Heroku Docker Hub..."
-    docker login --username=_ --password=$heroku_api_key registry.heroku.com
-}
-
 deploy_docker_image () {
     local component=$1
     local project=$2
@@ -116,10 +110,11 @@ if [ -n "$HEROKU_API_KEY" ]; then
     build_base_image
     # build_project module $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
     build_project client $PROJECT $trimmed_branch
+    cp ./server/.env.dev ./server/.env
     build_project server $PROJECT $trimmed_branch
 
     # Deploy
-    login_to_heroku_docker $HEROKU_API_KEY
+    docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
     deploy_docker_image client $PROJECT $trimmed_branch
     # deploy_docker_image server $PROJECT $trimmed_branch
 fi
