@@ -3,3 +3,27 @@
 
 FROM atlassian/default-image
 RUN curl https://cli-assets.heroku.com/install.sh | sh; heroku --version; which heroku;
+
+# 1
+RUN sudo curl -L --fail https://github.com/docker/compose/releases/download/1.24.0/run.sh -o /usr/local/bin/docker-compose
+RUN sudo chmod +x /usr/local/bin/docker-compose
+
+
+
+# RUN sudo curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+# RUN sudo chmod +x /usr/local/bin/docker-compose
+
+# RUN sudo pip install docker-compose
+# RUN docker-compose --version
+
+# RUN apt-get update \
+#     && apt-get install -y \
+#         py-pip \
+#     && rm -rf /var/lib/apt/lists/*
+
+# Add python pip and bash
+# RUN apk add --no-cache py-pip bash
+
+# Install docker-compose via pip
+# RUN pip install --no-cache-dir docker-compose
+# RUN docker-compose -v
