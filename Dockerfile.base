@@ -1,8 +1,12 @@
 FROM node:8.15-alpine
 
 # Speed up NPM by preventing it from displaying progress
-RUN npm set progress=false
-RUN npm config set depth 0
+RUN npm set progress=false \
+      # Future installs should try to use this cache:
+      # npm set prefer-offline=true \ 
+      npm config set depth 0
+
+WORKDIR /project
 
 # Install Chrome
 RUN apk update && apk upgrade && \
@@ -18,19 +22,3 @@ RUN apk update && apk upgrade && \
       ttf-freefont@edge
 ENV CHROME_BIN=/usr/bin/chromium-browser \
     CHROME_PATH=/usr/lib/chromium/      
-
-# Create dependency cache
-# COPY /module/package*.json /module/
-# RUN npm install --prefix=module
-
-# COPY /client/package*.json /client/
-# RUN npm install --prefix=client
-
-# COPY /server/package*.json /server/
-# RUN npm install --prefix=server
-# END: Create dependency cache
-
-# Future installs should try to use this cache
-RUN npm set prefer-offline=true
-
-WORKDIR /project
