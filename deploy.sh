@@ -47,6 +47,13 @@ heroku_app_name () {
     echo "$(trim_string_to_length $project-$branch)-$component"
 }
 
+heroku_app_url () {
+    local project=$1
+    local component=$2
+    local branch=$3
+    echo "Deployed app to https://$(heroku_app_name $project $component $branch).herokuapp.com"
+}
+
 # Push Docker release image to Heroku
 deploy_docker_image () {
     local component=$1
