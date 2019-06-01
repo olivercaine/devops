@@ -37,10 +37,8 @@ build_module () {
     fi
 }
 
-# Create Heroku app name based on variables
+# Creates Heroku app name using variables. Max 30 chars. Convention: [project]-[trimmed-branch]-[c|s]
 heroku_app_name () { 
-    # Convention: [project]-[trimmed-branch]-[c|s]
-    # Max length = 30 characters
     local project=$1
     local component=$(echo $2 | head -c 1)
     local branch=$(replace_slashes_with_underscores $3)
