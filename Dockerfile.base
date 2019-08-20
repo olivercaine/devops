@@ -9,16 +9,17 @@ RUN npm set progress=false \
 WORKDIR /project
 
 # Install Chrome
+# Use dl-cdn instead of nl?
 RUN apk update && apk upgrade && \
-    echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
-    echo @edge http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
+    echo http://nl.alpinelinux.org/alpine/v3.8/community >> /etc/apk/repositories && \
+    echo http://nl.alpinelinux.org/alpine/v3.8/main >> /etc/apk/repositories && \
     apk add --no-cache \
-      chromium@edge \
-      nss@edge \
-      make@edge \
-      python@edge \      
-      freetype@edge \
-      harfbuzz@edge \
-      ttf-freefont@edge
+      chromium \
+      nss \
+      make \
+      python \      
+      freetype \
+      harfbuzz \
+      ttf-freefont
 ENV CHROME_BIN=/usr/bin/chromium-browser \
     CHROME_PATH=/usr/lib/chromium/      
