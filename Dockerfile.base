@@ -5,20 +5,3 @@ RUN npm set progress=false \
       npm set prefer-offline=true \ 
       # Speed up NPM by preventing it from displaying progress
       npm config set depth 0
-
-WORKDIR /project
-
-# Install Chrome
-RUN apk update && apk upgrade && \
-    echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
-    echo @edge http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
-    apk add --no-cache \
-      chromium@edge \
-      nss@edge \
-      make@edge \
-      python@edge \      
-      freetype@edge \
-      harfbuzz@edge \
-      ttf-freefont@edge
-ENV CHROME_BIN=/usr/bin/chromium-browser \
-    CHROME_PATH=/usr/lib/chromium/      

@@ -82,11 +82,12 @@ deploy_docker_image () {
 }
 
 # Builds the image which contains Node version and build dependencies
-build_base_image () {
+build_docker_images () {
     echo "Checking if base image exists..."
     if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
         echo "Base image doesn't exist. Building now..."
-        time docker build . -f ./devops/Dockerfile.base -t olliecaine/base:1.0.9
+        time docker build . -f ./devops/Dockerfile.base -t olliecaine/base:master
+        time docker build . -f ./devops/Dockerfile.dev -t olliecaine/dev:master
     else 
         echo "Bypassing build of base image as it already exists..."
     fi
@@ -109,7 +110,7 @@ if [ -n "$HEROKU_API_KEY" ]; then
     echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
     # Build
-    build_base_image
+    build_docker_images
     cp ./server/.env.dev ./server/.env
     # build_module shared $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
     build_module client $PROJECT $trimmed_branch
