@@ -1,4 +1,4 @@
-FROM olliecaine/dev:master
+FROM olliecaine/base:master
 
 WORKDIR /project
 
