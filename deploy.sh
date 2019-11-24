@@ -109,7 +109,7 @@ if [ -n "$HEROKU_API_KEY" ]; then
     echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
     # Build
-    build_base_image
+    # build_base_image
     cp ./server/.env.dev ./server/.env
     # build_module shared $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
     build_module client $PROJECT $trimmed_branch
