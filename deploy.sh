@@ -82,16 +82,16 @@ deploy_docker_image () {
 }
 
 # Builds the image which contains Node version and build dependencies
-build_docker_images () {
-    echo "Checking if base image exists..."
-    if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
-        echo "Base image doesn't exist. Building now..."
-        time docker build . -f ./devops/Dockerfile.base -t olliecaine/base:master
-        time docker build . -f ./devops/Dockerfile.dev -t olliecaine/dev:master
-    else 
-        echo "Bypassing build of base image as it already exists..."
-    fi
-}
+# build_docker_images () {
+#     echo "Checking if base image exists..."
+#     if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
+#         echo "Base image doesn't exist. Building now..."
+#         time docker build . -f ./devops/Dockerfile.base -t olliecaine/base:master
+#         time docker build . -f ./devops/Dockerfile.dev -t olliecaine/dev:master
+#     else 
+#         echo "Bypassing build of base image as it already exists..."
+#     fi
+# }
 
 HEROKU_API_KEY=$1
 if [ -n "$HEROKU_API_KEY" ]; then
