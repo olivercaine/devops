@@ -25,18 +25,6 @@ replace_slashes_with_underscores () {
     echo ${string//\//'-'} 
 }
 
-# Builds module into Docker release image
-build_module () {
-    local component=$1
-    local project=$2
-    local branch=$3
-
-    if [ -d $component ]; then
-        echo "Install, lint, test and build image for '$component' using Docker..."
-        time BRANCH=$branch PROJECT=$project docker-compose -f docker-compose.yml build $component
-    fi
-}
-
 # Creates Heroku app name using variables. Max 30 chars. Convention: [project]-[trimmed-branch]-[c|s]
 heroku_app_name () { 
     local project=$1
@@ -81,18 +69,6 @@ deploy_docker_image () {
     fi
 }
 
-# Builds the image which contains Node version and build dependencies
-# build_docker_images () {
-#     echo "Checking if base image exists..."
-#     if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
-#         echo "Base image doesn't exist. Building now..."
-#         time docker build . -f ./devops/Dockerfile.base -t olliecaine/base:master
-#         time docker build . -f ./devops/Dockerfile.dev -t olliecaine/dev:master
-#     else 
-#         echo "Bypassing build of base image as it already exists..."
-#     fi
-# }
-
 HEROKU_API_KEY=$1
 if [ -n "$HEROKU_API_KEY" ]; then
     echo HEROKU_API_KEY $HEROKU_API_KEY
@@ -110,14 +86,8 @@ if [ -n "$HEROKU_API_KEY" ]; then
     echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
     # Build
-    # build_docker_images
     cp ./server/.env.dev ./server/.env
-    # build_module shared $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
-    # build_module client $PROJECT $trimmed_branch
-    # build_module server $PROJECT $trimmed_branch
-    
     time BRANCH=$trimmed_branch PROJECT=$PROJECT docker-compose -f docker-compose.yml build --parallel
-
 
     # Deploy
     docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
