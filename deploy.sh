@@ -116,7 +116,7 @@ if [ -n "$HEROKU_API_KEY" ]; then
     # build_module client $PROJECT $trimmed_branch
     # build_module server $PROJECT $trimmed_branch
     
-    time "BRANCH=$trimmed_branch" "PROJECT=$PROJECT" docker-compose -f docker-compose.yml build --parallel
+    time BRANCH=$trimmed_branch PROJECT=$PROJECT docker-compose -f docker-compose.yml build --parallel
 
 
     # Deploy
