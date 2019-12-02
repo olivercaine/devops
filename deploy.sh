@@ -113,8 +113,11 @@ if [ -n "$HEROKU_API_KEY" ]; then
     # build_docker_images
     cp ./server/.env.dev ./server/.env
     # build_module shared $PROJECT "latest" # TODO: fix branch here and in Client Dockerfile (COPY --from)
-    build_module client $PROJECT $trimmed_branch
-    build_module server $PROJECT $trimmed_branch
+    # build_module client $PROJECT $trimmed_branch
+    # build_module server $PROJECT $trimmed_branch
+    
+    time "BRANCH=$trimmed_branch" "PROJECT=$PROJECT" docker-compose -f docker-compose.yml build --parallel
+
 
     # Deploy
     docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
