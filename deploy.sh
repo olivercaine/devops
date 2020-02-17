@@ -98,9 +98,9 @@ if [ -n "$HEROKU_API_KEY" ]; then
     echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
     # Build
-    if [ "$BRANCH" != 'master' ]; then
-        build_base_and_dev_images $BRANCH
-    fi
+    # if [ "$BRANCH" != 'master' ]; then
+    #     build_base_and_dev_images $BRANCH
+    # fi
     cp ./server/.env.dev ./server/.env
     time BRANCH=$trimmed_branch PROJECT=$PROJECT docker-compose -f docker-compose.yml build --parallel
 
