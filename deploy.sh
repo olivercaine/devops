@@ -69,6 +69,18 @@ deploy_docker_image () {
     fi
 }
 
+# build_docker_images () {
+#     local branch=${1:-$master}
+#     echo "Checking if base image exists..."
+#     if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
+#         echo "Base image doesn't exist. Building now..."
+#         time docker build . -f ./devops/Dockerfile.base -t olliecaine/base:$branch
+#         time docker build . -f ./devops/Dockerfile.dev -t olliecaine/dev:$branch
+#     else 
+#         echo "Bypassing build of base image as it already exists..."
+#     fi
+# }
+
 HEROKU_API_KEY=$1
 if [ -n "$HEROKU_API_KEY" ]; then
     echo HEROKU_API_KEY $HEROKU_API_KEY
@@ -86,6 +98,7 @@ if [ -n "$HEROKU_API_KEY" ]; then
     echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
     # Build
+    # build_docker_images $BRANCH
     cp ./server/.env.dev ./server/.env
     time BRANCH=$trimmed_branch PROJECT=$PROJECT docker-compose -f docker-compose.yml build --parallel
 
