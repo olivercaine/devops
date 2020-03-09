@@ -35,7 +35,7 @@ uat () {
     open "https://${directory}-${3:-$(git symbolic-ref -q --short HEAD)}-c.herokuapp.com/"
 }
 
-merge_to_all_branches_from () {
+merge_to_remote_branches_from () {
     local merge_from=${1:-$(git symbolic-ref --short HEAD)} # Merge to all branches from current branch by default
     
     # Bitbucket's git is configured to not pull remote's branches
