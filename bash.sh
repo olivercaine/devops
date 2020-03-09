@@ -57,8 +57,10 @@ merge_to_all_branches_from () {
     #     git push --no-verify
     # done
 
+    git remote -v
+
     for ref in $(git for-each-ref --format='%(refname:short)' | grep 'origin/' | grep -v master | grep -v HEAD); do
-        echo ${ref/'origin/'/''}
+        echo "ref: " $ref
 
     #     if [[ "${branch}" != "master" ]]; then
     #         echo "Merge from $merge_from to ${branch}"
@@ -66,5 +68,6 @@ merge_to_all_branches_from () {
     #         # git merge $merge_from
     #         # git push --no-verify
     #     fi
+
     done
 }
