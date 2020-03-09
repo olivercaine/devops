@@ -41,6 +41,7 @@ merge_to_all_branches_from () {
     echo "merge_from $merge_from"
     
     git fetch --all
+    git pull --all
 
     # for branch in $(git for-each-ref --format='%(refname)' refs/heads/); do
     #     echo "${branch/'refs/heads/'/''}" 
@@ -66,7 +67,7 @@ merge_to_all_branches_from () {
     #         echo "Merge from $merge_from to ${branch}"
     #         # git checkout "${branch}"
     #         # git merge $merge_from
-    #         # git push --no-verify
+    #         # git push origin --no-verify
     #     fi
 
     done
