@@ -40,8 +40,8 @@ merge_to_all_branches_from () {
     local merge_from=${1:-$(git symbolic-ref --short HEAD)} # Merge to all branches from current branch by default
     echo "merge_from $merge_from"
     
-    git fetch --all
-    git pull --all
+    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    git fetch origin
 
     # for branch in $(git for-each-ref --format='%(refname)' refs/heads/); do
     #     echo "${branch/'refs/heads/'/''}" 
@@ -58,27 +58,25 @@ merge_to_all_branches_from () {
     #     git push --no-verify
     # done
 
-    git branch -a | grep remotes/origin/*
+    # git branch -a | grep remotes/origin/*
 
-    for BRANCH in `git branch -a | grep remotes/origin/*` ;
+    # for BRANCH in `git branch -a | grep remotes/origin/*` ;
 
-    do
-        A="$(cut -d'/' -f3 <<<"$BRANCH")"
-        echo "A: " $A
+    # do
+    #     A="$(cut -d'/' -f3 <<<"$BRANCH")"
+    #     echo "A: " $A
 
-    done 
+    # done 
 
     # git remote -v
 
-    # for ref in $(git for-each-ref --format='%(refname:short)'); do
-    #     echo "ref: " $ref
-
-    # #     if [[ "${branch}" != "master" ]]; then
-    # #         echo "Merge from $merge_from to ${branch}"
-    # #         # git checkout "${branch}"
-    # #         # git merge $merge_from
-    # #         # git push origin --no-verify
-    # #     fi
-
-    # done
+    for ref in $(git for-each-ref --format='%(refname:short)'); do
+        echo "ref: " $ref
+        if [[ "${branch}" != "master" ]]; then
+            echo "Merge from $merge_from to ${branch}"
+            # git checkout "${branch}"
+            # git merge $merge_from
+            # git push origin --no-verify
+        fi
+    done
 }
