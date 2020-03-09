@@ -40,7 +40,7 @@ merge_to_all_branches_from () {
     local merge_from=${1:-$(git symbolic-ref --short HEAD)} # Merge to all branches from current branch by default
     echo "merge_from $merge_from"
     
-    # git fetch --all
+    git fetch --all
 
     for branch in $(git for-each-ref --format="%(refname:short)" refs/heads); do
         echo "b $branch"
