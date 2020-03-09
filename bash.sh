@@ -47,8 +47,7 @@ merge_to_remote_branches_from () {
         if [[ "$branch" != "master" ]]; then
             echo "Merge from $merge_from to $branch..."
             git checkout $branch
-            git merge $merge_from
-            git push origin --no-verify
+            git merge $merge_from && git push origin --no-verify
         fi
     done
 }
