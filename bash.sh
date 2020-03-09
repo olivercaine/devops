@@ -36,14 +36,17 @@ uat () {
 }
 
 merge_to_all_branches_from () {
+    echo "1 $1"
     local merge_from=${1:-$(git symbolic-ref --short HEAD)} # Merge to all branches from current branch by default
+    echo "merge_from $merge_from"
 
     for branch in $(git for-each-ref --format="%(refname:short)" refs/heads); do
-    if [[ "${branch}" != "master" ]]; then
-        echo "Merge from $merge_from to ${branch}"
-        git checkout "${branch}"
-        git merge $merge_from
-        git push --no-verify
-    fi
+        echo "b $branch"
+        if [[ "${branch}" != "master" ]]; then
+            echo "Merge from $merge_from to ${branch}"
+            git checkout "${branch}"
+            git merge $merge_from
+            git push --no-verify
+        fi
     done
 }
