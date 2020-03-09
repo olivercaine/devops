@@ -46,24 +46,25 @@ merge_to_all_branches_from () {
     #     echo "${branch/'refs/heads/'/''}" 
     # done
 
-    remote=origin; #// put here the name of the remote you want
-    for brname in `git branch -r | grep $remote | grep -v master | grep -v HEAD | awk '{gsub(/[^\/]+\//,"",$1); print $1}'`; do 
-        echo "brname" $brname
-        # git branch --set-upstream-to $remote/$brname $brname; 
-        # or
-        # git branch --track $brname $remote/$brname ; 
-        git checkout $brname
-        git merge $merge_from
-        git push --no-verify
-    done
+    # remote=origin; #// put here the name of the remote you want
+    # for brname in `git branch -r | grep $remote | grep -v master | grep -v HEAD | awk '{gsub(/[^\/]+\//,"",$1); print $1}'`; do 
+    #     echo "brname" $brname
+    #     # git branch --set-upstream-to $remote/$brname $brname; 
+    #     # or
+    #     # git branch --track $brname $remote/$brname ; 
+    #     git checkout $brname
+    #     git merge $merge_from
+    #     git push --no-verify
+    # done
 
-    # for branch in $(git for-each-ref --format='%(refname:short)' refs/heads); do
-    #     # echo "b $branch"
+    for ref in $(git for-each-ref --format='%(refname:short)' | grep 'origin/' | grep -v master | grep -v HEAD); do
+        echo ${ref/'origin/'/''}
+
     #     if [[ "${branch}" != "master" ]]; then
     #         echo "Merge from $merge_from to ${branch}"
     #         # git checkout "${branch}"
     #         # git merge $merge_from
     #         # git push --no-verify
     #     fi
-    # done
+    done
 }
