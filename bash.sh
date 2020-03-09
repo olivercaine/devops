@@ -58,17 +58,27 @@ merge_to_all_branches_from () {
     #     git push --no-verify
     # done
 
-    git remote -v
+    git branch -a | grep remotes/origin/*
 
-    for ref in $(git for-each-ref --format='%(refname:short)'); do
-        echo "ref: " $ref
+    for BRANCH in `git branch -a | grep remotes/origin/*` ;
 
-    #     if [[ "${branch}" != "master" ]]; then
-    #         echo "Merge from $merge_from to ${branch}"
-    #         # git checkout "${branch}"
-    #         # git merge $merge_from
-    #         # git push origin --no-verify
-    #     fi
+    do
+        A="$(cut -d'/' -f3 <<<"$BRANCH")"
+        echo "A: " $A
 
-    done
+    done 
+
+    # git remote -v
+
+    # for ref in $(git for-each-ref --format='%(refname:short)'); do
+    #     echo "ref: " $ref
+
+    # #     if [[ "${branch}" != "master" ]]; then
+    # #         echo "Merge from $merge_from to ${branch}"
+    # #         # git checkout "${branch}"
+    # #         # git merge $merge_from
+    # #         # git push origin --no-verify
+    # #     fi
+
+    # done
 }
