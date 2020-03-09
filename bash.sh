@@ -59,7 +59,7 @@ merge_to_all_branches_from () {
 
     git remote -v
 
-    for ref in $(git for-each-ref --format='%(refname:short)' | grep 'origin/' | grep -v master | grep -v HEAD); do
+    for ref in $(git for-each-ref --format='%(refname:short)'); do
         echo "ref: " $ref
 
     #     if [[ "${branch}" != "master" ]]; then
