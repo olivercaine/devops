@@ -42,14 +42,13 @@ merge_to_remote_branches_from () {
     git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
     git fetch origin
 
-    for ref in $(git for-each-ref --format='%(refname:short)' | grep -v master | grep -v HEAD); do # Loops over refs except master and HEAD
+    for ref in $(git for-each-ref --format='%(refname:short)' | grep 'origin/' | grep -v master | grep -v HEAD); do # Loops over refs except master and HEAD
         branch=${ref:7} # Strip 'origin/' from the beginning
-        if [ $branch != "master" ] && [ $branch != "release" ]; then
+        if [ "$branch" != "master" ] && [ "$branch" != "release" ]; then
             echo "Merging $merge_from to $branch..."
             git checkout $branch
-            git merge $merge_from || git merge --abort && continue
+            git merge $merge_from --no-edit || (git merge --abort && continue)
             git push origin --no-verify
-            git checkout $merge_from
             echo "Merged $merge_from to $branch."
         fi
     done
