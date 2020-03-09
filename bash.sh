@@ -36,47 +36,19 @@ uat () {
 }
 
 merge_to_all_branches_from () {
-    echo "1 $1"
     local merge_from=${1:-$(git symbolic-ref --short HEAD)} # Merge to all branches from current branch by default
-    echo "merge_from $merge_from"
     
+    # Bitbucket's git is configured to not pull remote's branches
     git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
     git fetch origin
 
-    # for branch in $(git for-each-ref --format='%(refname)' refs/heads/); do
-    #     echo "${branch/'refs/heads/'/''}" 
-    # done
-
-    # remote=origin; #// put here the name of the remote you want
-    # for brname in `git branch -r | grep $remote | grep -v master | grep -v HEAD | awk '{gsub(/[^\/]+\//,"",$1); print $1}'`; do 
-    #     echo "brname" $brname
-    #     # git branch --set-upstream-to $remote/$brname $brname; 
-    #     # or
-    #     # git branch --track $brname $remote/$brname ; 
-    #     git checkout $brname
-    #     git merge $merge_from
-    #     git push --no-verify
-    # done
-
-    # git branch -a | grep remotes/origin/*
-
-    # for BRANCH in `git branch -a | grep remotes/origin/*` ;
-
-    # do
-    #     A="$(cut -d'/' -f3 <<<"$BRANCH")"
-    #     echo "A: " $A
-
-    # done 
-
-    # git remote -v
-
-    for ref in $(git for-each-ref --format='%(refname:short)'); do
-        echo "ref: " $ref
-        if [[ "${branch}" != "master" ]]; then
-            echo "Merge from $merge_from to ${branch}"
-            # git checkout "${branch}"
-            # git merge $merge_from
-            # git push origin --no-verify
+    for ref in $(git for-each-ref --format='%(refname:short)' | grep -v master | grep -v HEAD); do # Loops over refs except master and HEAD
+        branch=${ref:7} # Strip 'origin/' from the beginning
+        if [[ "$branch" != "master" ]]; then
+            echo "Merge from $merge_from to $branch..."
+            git checkout $branch
+            git merge $merge_from
+            git push origin --no-verify
         fi
     done
 }
