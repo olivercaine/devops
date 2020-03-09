@@ -36,9 +36,9 @@ uat () {
 }
 
 merge_to_all_branches_from () {
-    # echo "1 $1"
+    echo "1 $1"
     local merge_from=${1:-$(git symbolic-ref --short HEAD)} # Merge to all branches from current branch by default
-    # echo "merge_from $merge_from"
+    echo "merge_from $merge_from"
     
     # git fetch --all
 
@@ -51,7 +51,7 @@ merge_to_all_branches_from () {
         echo "brname" $brname
         # git branch --set-upstream-to $remote/$brname $brname; 
         # or
-        # git branch --track $brname  $remote/$brname ; 
+        # git branch --track $brname $remote/$brname ; 
         git checkout $brname
         git merge $merge_from
         git push --no-verify
