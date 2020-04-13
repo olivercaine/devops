@@ -19,28 +19,26 @@ trim_string_to_length () {
     echo $string
 }
 
-# Replaces slashes with underscores
 replace_slashes_with_underscores () {
     local string=$1
     echo ${string//\//'-'} 
 }
 
-# Creates Heroku app name using variables. Max 30 chars. Convention: [project]-[trimmed-branch]-[c|s]
-heroku_app_name () { 
+create_heroku_app_name () { 
     local project=$1
     local component=$(echo $2 | head -c 1)
     local branch=$(replace_slashes_with_underscores $3)
-    echo "$(trim_string_to_length $project-$branch)-$component"
+    # Max 30 chars. Convention: [project]-[trimmed-branch]-[c|s]
+    echo "$(trim_string_to_length $project-$branch)-$component" 
 }
 
 heroku_app_url () {
     local project=$1
     local component=$2
     local branch=$3
-    echo "Deployed app to https://$(heroku_app_name $project $component $branch).herokuapp.com"
+    echo "Deployed app to https://$(create_heroku_app_name $project $component $branch).herokuapp.com"
 }
 
-# Push Docker release image to Heroku
 deploy_docker_image () {
     local component=$1
     local project=$2
@@ -49,7 +47,7 @@ deploy_docker_image () {
     if [ -d $component ]; then
         echo "Building and pushing container for $component..."
 
-        local heroku_app_name=$(heroku_app_name $project $component $branch)
+        local heroku_app_name=$(create_heroku_app_name $project $component $branch)
         local image_id=$(docker images $project/$component:$branch --format "{{.ID}}")
         local image_name="registry.heroku.com/$heroku_app_name/web"
         
