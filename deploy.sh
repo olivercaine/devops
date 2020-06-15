@@ -19,15 +19,18 @@ trim_string_to_length () {
     echo $string
 }
 
-replace_slashes_with_underscores () {
+# Replaces slashes with underscores
+replace_slashes_and_full_stops_with_underscores () {
     local string=$1
-    echo ${string//\//'-'} 
+    local no_slashes=${string//\//'-'} 
+    local no_full_stops=${no_slashes//'.'//'-'} 
+    echo $no_full_stops
 }
 
 create_heroku_app_name () { 
     local project=$1
     local component=$(echo $2 | head -c 1)
-    local branch=$(replace_slashes_with_underscores $3)
+    local branch=$(replace_slashes_and_full_stops_with_underscores $3)
     # Max 30 chars. Convention: [project]-[trimmed-branch]-[c|s]
     echo "$(trim_string_to_length $project-$branch)-$component" 
 }
@@ -90,7 +93,7 @@ if [ -n "$HEROKU_API_KEY" ]; then
     echo PROJECT $PROJECT
 
     BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
-    trimmed_branch=$(replace_slashes_with_underscores $BRANCH)
+    trimmed_branch=$(replace_slashes_and_full_stops_with_underscores $BRANCH)
 
     BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
     echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
