@@ -87,18 +87,20 @@ build_and_deploy () {
     if [ -n "$HEROKU_API_KEY" ]; then
         echo HEROKU_API_KEY $HEROKU_API_KEY
 
-        repo_url=$(git config --get remote.origin.url)
+        local repo_url=$(git config --get remote.origin.url)
         repo=${repo_url##*/}
-        proj=${repo%%.*}
+        
+        local proj=${repo%%.*}
         PROJECT=${2:-$proj}
         echo PROJECT $PROJECT
 
-        BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
+        local BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
         echo BRANCH $BRANCH
-        trimmed_branch=$(replace_slashes_and_full_stops_with_hyphen $BRANCH)
+        
+        local trimmed_branch=$(replace_slashes_and_full_stops_with_hyphen $BRANCH)
         echo trimmed_branch $trimmed_branch
 
-        BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
+        local BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
         echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
         # Build
