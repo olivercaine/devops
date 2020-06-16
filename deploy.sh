@@ -82,33 +82,38 @@ build_base_and_dev_images () {
     fi
 }
 
-HEROKU_API_KEY=$1
-if [ -n "$HEROKU_API_KEY" ]; then
-    echo HEROKU_API_KEY $HEROKU_API_KEY
+build_and_deploy () {
+    local HEROKU_API_KEY=$1
+    if [ -n "$HEROKU_API_KEY" ]; then
+        echo HEROKU_API_KEY $HEROKU_API_KEY
 
-    repo_url=$(git config --get remote.origin.url)
-    repo=${repo_url##*/}
-    proj=${repo%%.*}
-    PROJECT=${2:-$proj}
-    echo PROJECT $PROJECT
+        repo_url=$(git config --get remote.origin.url)
+        repo=${repo_url##*/}
+        proj=${repo%%.*}
+        PROJECT=${2:-$proj}
+        echo PROJECT $PROJECT
 
-    BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
-    echo BRANCH $BRANCH
-    trimmed_branch=$(replace_slashes_and_full_stops_with_hyphen $BRANCH)
-    echo trimmed_branch $trimmed_branch
+        BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
+        echo BRANCH $BRANCH
+        trimmed_branch=$(replace_slashes_and_full_stops_with_hyphen $BRANCH)
+        echo trimmed_branch $trimmed_branch
 
-    BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
-    echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
+        BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
+        echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
-    # Build
-    # if [ "$BRANCH" != 'master' ]; then
-    #     build_base_and_dev_images $BRANCH
-    # fi
-    cp ./server/.env.dev ./server/.env
-    time BRANCH=$trimmed_branch PROJECT=$PROJECT docker-compose -f docker-compose.yml build --parallel
+        # Build
+        # if [ "$BRANCH" != 'master' ]; then
+        #     build_base_and_dev_images $BRANCH
+        # fi
+        cp ./server/.env.dev ./server/.env
+        time BRANCH=$trimmed_branch PROJECT=$PROJECT docker-compose -f docker-compose.yml build --parallel
 
-    # Deploy
-    docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-    deploy_docker_image client $PROJECT $trimmed_branch
-    # deploy_docker_image server $PROJECT $trimmed_branch
-fi
+        # Deploy
+        if  [[ "$BRANCH" == release* ]];
+        then
+            docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+            deploy_docker_image client $PROJECT $trimmed_branch
+            # deploy_docker_image server $PROJECT $trimmed_branch
+        fi
+    fi
+}
