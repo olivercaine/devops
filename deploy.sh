@@ -103,19 +103,12 @@ build_and_deploy () {
         local BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
         echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
-        # Build
-        # if [ "$BRANCH" != 'master' ]; then
-        #     build_base_and_dev_images $BRANCH
-        # fi
         cp ./server/.env.dev ./server/.env
         time BRANCH=$trimmed_branch PROJECT=$PROJECT docker-compose -f docker-compose.yml build --parallel
 
         # Deploy
-        if  [[ "$BRANCH" == release* ]];
-        then
-            docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-            deploy_docker_image client $PROJECT $trimmed_branch
-            deploy_docker_image server $PROJECT $trimmed_branch
-        fi
+        docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+        deploy_docker_image client $PROJECT $trimmed_branch
+        deploy_docker_image server $PROJECT $trimmed_branch
     fi
 }
