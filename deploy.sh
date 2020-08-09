@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e # Exit on non-zero
+# set -e # Exit on non-zero
 
 trim_string_to_length () {
     local string=$1
@@ -83,6 +83,8 @@ build_base_and_dev_images () {
 }
 
 build_and_deploy () {
+    echo "Build and deploy..."
+    
     local HEROKU_API_KEY=$1
     echo HEROKU_API_KEY $HEROKU_API_KEY
 
