@@ -106,7 +106,6 @@ build_and_deploy () {
 
     # Deploy if Heroku key provided
     if [ -n "$HEROKU_API_KEY" ]; then
-        echo HEROKU_API_KEY $HEROKU_API_KEY
         docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
         deploy_docker_image client $PROJECT $trimmed_branch
         deploy_docker_image server $PROJECT $trimmed_branch
