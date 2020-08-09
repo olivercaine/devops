@@ -84,29 +84,29 @@ build_base_and_dev_images () {
 
 build_and_deploy () {
     local HEROKU_API_KEY=$1
+
+    local repo_url=$(git config --get remote.origin.url)
+    repo=${repo_url##*/}
+    
+    local proj=${repo%%.*}
+    PROJECT=${2:-$proj}
+    echo PROJECT $PROJECT
+
+    local BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
+    echo BRANCH $BRANCH
+    
+    local trimmed_branch=$(replace_slashes_and_full_stops_with_hyphen $BRANCH)
+    echo trimmed_branch $trimmed_branch
+
+    local BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
+    echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
+
+    cp ./server/.env.dev ./server/.env
+    time BRANCH=$trimmed_branch PROJECT=$PROJECT docker-compose -f docker-compose.yml build --parallel
+
+    # Deploy if Heroku key provided
     if [ -n "$HEROKU_API_KEY" ]; then
         echo HEROKU_API_KEY $HEROKU_API_KEY
-
-        local repo_url=$(git config --get remote.origin.url)
-        repo=${repo_url##*/}
-        
-        local proj=${repo%%.*}
-        PROJECT=${2:-$proj}
-        echo PROJECT $PROJECT
-
-        local BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
-        echo BRANCH $BRANCH
-        
-        local trimmed_branch=$(replace_slashes_and_full_stops_with_hyphen $BRANCH)
-        echo trimmed_branch $trimmed_branch
-
-        local BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
-        echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
-
-        cp ./server/.env.dev ./server/.env
-        time BRANCH=$trimmed_branch PROJECT=$PROJECT docker-compose -f docker-compose.yml build --parallel
-
-        # Deploy
         docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
         deploy_docker_image client $PROJECT $trimmed_branch
         deploy_docker_image server $PROJECT $trimmed_branch
