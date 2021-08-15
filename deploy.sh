@@ -70,18 +70,6 @@ deploy_docker_image () {
     fi
 }
 
-build_base_and_dev_images () {
-    local branch=${1:-$master}
-    echo "Checking if base image exists..."
-    if [ "$(docker images -q base:latest 2> /dev/null)" == "" ]; then
-        echo "Base image doesn't exist. Building now..."
-        time docker build . -f ./devops/Dockerfile.base -t olliecaine/base:$branch
-        time docker build . -f ./devops/Dockerfile.dev -t olliecaine/dev:$branch
-    else 
-        echo "Bypassing build of base image as it already exists..."
-    fi
-}
-
 build_and_deploy () {
     local HEROKU_API_KEY=$1
 
