@@ -1,4 +1,4 @@
-FROM olliecaine/base:master
+FROM olliecaine/base:node10alpine
 
 WORKDIR /project
 
