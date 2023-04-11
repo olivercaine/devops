@@ -93,9 +93,11 @@ build_and_deploy () {
     time BRANCH=$trimmed_branch PROJECT=$PROJECT docker-compose -f docker-compose.yml build --parallel
 
     # Deploy if Heroku key provided
-    if [ -n "$HEROKU_API_KEY" ]; then
+    if [ -z "${HEROKU_API_KEY}" ]; then
         docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
         deploy_docker_image client $PROJECT $trimmed_branch
         deploy_docker_image server $PROJECT $trimmed_branch
+    else
+        echo "No HEROKU_API_KEY found. Skipping deploy"
     fi
 }
