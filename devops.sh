@@ -72,6 +72,7 @@ deploy_docker_image () {
 
 build_and_deploy () {
     local HEROKU_API_KEY=$1
+    echo HEROKU_API_KEY $HEROKU_API_KEY
 
     local repo_url=$(git config --get remote.origin.url)
     repo=${repo_url##*/}
@@ -93,7 +94,7 @@ build_and_deploy () {
     echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
     cp ./server/.env.dev ./server/.env
-    time BRANCH=$trimmed_branch PROJECT=$PROJECT -e "GITHUB_TOKEN=$GITHUB_TOKEN" docker-compose -f docker-compose.yml build --parallel
+    time BRANCH=$trimmed_branch PROJECT=$PROJECT -e GITHUB_TOKEN="${GITHUB_TOKEN}" docker-compose -f docker-compose.yml build --parallel
 
     # Deploy if Heroku key provided
     if [ -z "${HEROKU_API_KEY}" ]; then
