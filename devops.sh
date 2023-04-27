@@ -85,6 +85,9 @@ build_and_deploy () {
     
     local trimmed_branch=$(replace_slashes_and_full_stops_with_hyphen $BRANCH)
     echo trimmed_branch $trimmed_branch
+    
+    echo "GITHUB_TOKEN2 ${GITHUB_TOKEN2}"
+    echo "GITHUB_TOKEN ${GITHUB_TOKEN}"
 
     local BITBUCKET_COMMIT=${4:-$(git rev-parse --short HEAD)}
     echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
