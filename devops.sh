@@ -83,6 +83,9 @@ build_and_deploy () {
     local BRANCH=${3:-$(git symbolic-ref -q --short HEAD)}
     echo BRANCH $BRANCH
     
+    local GITHUB_TOKEN=${4}
+    echo GITHUB_TOKEN $GITHUB_TOKEN
+    
     local trimmed_branch=$(replace_slashes_and_full_stops_with_hyphen $BRANCH)
     echo trimmed_branch $trimmed_branch
 
@@ -90,7 +93,7 @@ build_and_deploy () {
     echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
     cp ./server/.env.dev ./server/.env
-    time BRANCH=$trimmed_branch PROJECT=$PROJECT -e "GITHUB_TOKEN=${GITHUB_TOKEN}" docker-compose -f docker-compose.yml build --parallel
+    time BRANCH=$trimmed_branch PROJECT=$PROJECT -e "GITHUB_TOKEN=$GITHUB_TOKEN" docker-compose -f docker-compose.yml build --parallel
 
     # Deploy if Heroku key provided
     if [ -z "${HEROKU_API_KEY}" ]; then
