@@ -93,7 +93,7 @@ build_and_deploy () {
     echo BITBUCKET_COMMIT $BITBUCKET_COMMIT
 
     cp ./server/.env.dev ./server/.env
-    time BRANCH=$trimmed_branch PROJECT=$PROJECT docker-compose -f docker-compose.yml build --build-arg GITHUB_TOKEN=$GITHUB_TOKEN --parallel
+    time BRANCH=$trimmed_branch PROJECT=$PROJECT docker-compose -f docker-compose.yml build --build-arg GITHUB_TOKEN="$GITHUB_TOKEN: --parallel
 
     # Deploy if Heroku key provided
     if [ -z "${HEROKU_API_KEY}" ]; then
